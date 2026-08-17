@@ -65,6 +65,42 @@ defaults match the real items currently in use:
 - No absolute positioning; all spacing is flexbox `gap` at the root level,
   each `oh-list-card` handling its own internal row layout natively.
 
+## Layout fix — narrow rendering in popup/page (2026-08-17)
+
+Reported: when opened (via a group/equipment default-widget popup or page),
+the three cards rendered in a narrow ~250px column with a lot of empty
+space to the right, and the title text wrapped awkwardly inside that
+narrow column — a strong sign of a **fixed-width parent grid cell**
+(e.g. a CSS `grid-template-columns: repeat(auto-fill, minmax(200px, 1fr))`
+pattern, which is how openHAB's auto-generated equipment/group overview
+grids commonly lay out single default widgets: with `auto-fill`, unused
+grid tracks stay reserved as empty space instead of letting the one
+item stretch, unlike `auto-fit`).
+
+Fix applied to the root `div`'s `style`:
+- `grid-column: 1 / -1` — makes the widget span every column if its
+  parent turns out to be a CSS grid (a no-op, harmless, if the parent
+  isn't a grid).
+- `flex: 1 1 100%` — same defensive idea for a flex-row parent.
+- `width: 100%` / `max-width: 100%` / `box-sizing: border-box` — belt and
+  braces for a plain block parent.
+- Each `oh-list-card` also got an explicit `style: {width: 100%}`, since
+  card components can carry their own intrinsic/shrink-to-fit width.
+
+Also fixed a **duplicated temperature value** on the setpoint slider
+(`29 °C29 °C`): `oh-slider-item` already displays its own current value
+next to the slider — the extra `after` expression I'd added duplicated
+it. Removed; only the `oh-label-item` rows (which do *not* auto-display
+their state — confirmed in the official docs) still set `after` manually.
+
+If cards are still narrow after this, the constraint is most likely on
+the **caller's side** rather than fixable from inside this widget — e.g.
+an explicit column/width set on whatever list/grid/popup is invoking
+`widget:swimming_pool_manager`. In that case the next thing to check is
+how the widget is being opened (equipment/group default widget vs. a
+manual `action: popup` on a link/list item) so the parent's own
+width/column config can be adjusted instead.
+
 ## Known issues / TODO
 
 - **Not validated against a running openHAB 5.x instance** — this

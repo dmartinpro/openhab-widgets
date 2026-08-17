@@ -80,11 +80,17 @@ config:
     flex-direction: column
     gap: 1rem
     width: 100%
+    max-width: 100%
+    flex: 1 1 100%
+    grid-column: 1 / -1
+    box-sizing: border-box
 slots:
   default:
     - component: oh-list-card
       config:
         title: Commandes spéciales
+        style:
+          width: 100%
       slots:
         default:
           - component: oh-toggle-item
@@ -100,6 +106,8 @@ slots:
     - component: oh-list-card
       config:
         title: Filtration
+        style:
+          width: 100%
       slots:
         default:
           - component: oh-toggle-item
@@ -110,6 +118,8 @@ slots:
     - component: oh-list-card
       config:
         title: Chauffage
+        style:
+          width: 100%
       slots:
         default:
           - component: oh-toggle-item
@@ -136,7 +146,6 @@ slots:
               unit: "°C"
               label: true
               releaseOnly: true
-              after: "=items[props.itemWaterTemperatureSetpoint].displayState || items[props.itemWaterTemperatureSetpoint].state"
           - component: oh-label-item
             config:
               item: =props.itemInputWaterTemperature
