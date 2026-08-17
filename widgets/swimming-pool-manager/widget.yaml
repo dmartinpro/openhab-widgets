@@ -1,0 +1,151 @@
+uid: swimming_pool_manager
+tags: []
+props:
+  parameterGroups:
+    - name: special
+      label: Special commands items
+    - name: filtration
+      label: Filtration items
+    - name: heating
+      label: Heating items
+  parameters:
+    - name: itemFiltrationForcedMode
+      label: Forced Filtration Switch Item
+      type: TEXT
+      context: item
+      description: Switch item toggling forced vs normal filtration mode
+      required: true
+      defaultValue: swimmingPoolFiltrationForcedOperation
+      groupName: special
+    - name: itemOffSeasonMode
+      label: Off-season (Winter) Mode Switch Item
+      type: TEXT
+      context: item
+      description: Switch item enabling/disabling winterization mode
+      required: true
+      defaultValue: swimmingPoolOffSeasonMode
+      groupName: special
+    - name: itemFiltrationPump
+      label: Filtration Pump Switch Item
+      type: TEXT
+      context: item
+      description: Switch item starting/stopping the filtration pump
+      required: true
+      defaultValue: Pool_Controller_Swimming_Pool_Pump
+      groupName: filtration
+    - name: itemHeaterPower
+      label: Heat Pump Power Switch Item
+      type: TEXT
+      context: item
+      description: Switch item turning the heat pump on/off
+      required: true
+      defaultValue: swimmingpoolHeaterPower
+      groupName: heating
+    - name: itemHeaterMode
+      label: Heat Pump Mode Item
+      type: TEXT
+      context: item
+      description: Item holding the heat pump operating mode (Auto, Heat, SilentHeat, BoostHeat, Cool, SilentCool, BoostCool)
+      required: true
+      defaultValue: Poolex_Jetblack_FI_7_mode
+      groupName: heating
+    - name: itemWaterTemperatureSetpoint
+      label: Water Temperature Setpoint Item
+      type: TEXT
+      context: item
+      description: Number item holding the heat pump target water temperature
+      required: true
+      defaultValue: swimmingPoolWaterTemperatureSetpoint
+      groupName: heating
+    - name: itemInputWaterTemperature
+      label: Inlet Water Temperature Item
+      type: TEXT
+      context: item
+      description: Read-only number item for the water temperature entering the heat pump
+      required: true
+      defaultValue: Pool_Controller_Temperature_Eau_Injection_Piscine
+      groupName: heating
+    - name: itemPoolWaterTemperature
+      label: Pool Water Temperature Item
+      type: TEXT
+      context: item
+      description: Read-only number item for the water temperature injected back into the pool
+      required: true
+      defaultValue: Pool_Controller_Temperature_Eau_Piscine
+      groupName: heating
+component: div
+config:
+  style:
+    display: flex
+    flex-direction: column
+    gap: 1rem
+    width: 100%
+slots:
+  default:
+    - component: oh-list-card
+      config:
+        title: Commandes spéciales
+      slots:
+        default:
+          - component: oh-toggle-item
+            config:
+              item: =props.itemFiltrationForcedMode
+              title: Filtration forcée
+              icon: f7:bolt_fill
+          - component: oh-toggle-item
+            config:
+              item: =props.itemOffSeasonMode
+              title: Mode Hivernage
+              icon: f7:snow
+    - component: oh-list-card
+      config:
+        title: Filtration
+      slots:
+        default:
+          - component: oh-toggle-item
+            config:
+              item: =props.itemFiltrationPump
+              title: Pompe de filtration
+              icon: f7:drop_fill
+    - component: oh-list-card
+      config:
+        title: Chauffage
+      slots:
+        default:
+          - component: oh-toggle-item
+            config:
+              item: =props.itemHeaterPower
+              title: Pompe à chaleur
+              icon: f7:flame_fill
+          - component: oh-list-item
+            config:
+              title: Mode de la pompe à chaleur
+              icon: f7:thermometer
+              after: "=({'Auto':'Auto','Heat':'Chauffe Eco','SilentHeat':'Chauffe Silencieuse','BoostHeat':'Chauffe Boost','Cool':'Refroidissement Eco','SilentCool':'Refroidissement Silencieux','BoostCool':'Refroidissement Boost'})[items[props.itemHeaterMode].state] || items[props.itemHeaterMode].state"
+              action: options
+              actionItem: =props.itemHeaterMode
+              actionOptions: "Auto=Auto,Heat=Chauffe Eco,SilentHeat=Chauffe Silencieuse,BoostHeat=Chauffe Boost,Cool=Refroidissement Eco,SilentCool=Refroidissement Silencieux,BoostCool=Refroidissement Boost"
+          - component: oh-slider-item
+            config:
+              item: =props.itemWaterTemperatureSetpoint
+              title: Consigne température eau
+              icon: f7:thermometer
+              min: 15
+              max: 32
+              step: 0.5
+              unit: "°C"
+              label: true
+              releaseOnly: true
+              after: "=items[props.itemWaterTemperatureSetpoint].displayState || items[props.itemWaterTemperatureSetpoint].state"
+          - component: oh-label-item
+            config:
+              item: =props.itemInputWaterTemperature
+              title: Température eau entrée PAC
+              icon: f7:thermometer
+              after: "=items[props.itemInputWaterTemperature].displayState || items[props.itemInputWaterTemperature].state"
+          - component: oh-label-item
+            config:
+              item: =props.itemPoolWaterTemperature
+              title: Température eau injectée piscine
+              icon: f7:thermometer
+              after: "=items[props.itemPoolWaterTemperature].displayState || items[props.itemPoolWaterTemperature].state"
