@@ -115,6 +115,15 @@ slots:
               item: =props.itemFiltrationPump
               title: Pompe de filtration
               icon: f7:drop_fill
+              visible: "=items[props.itemFiltrationForcedMode].state != 'ON'"
+          - component: oh-label-item
+            config:
+              item: =props.itemFiltrationPump
+              title: Pompe de filtration
+              subtitle: Verrouillée (filtration forcée active)
+              icon: f7:drop_fill
+              after: "=items[props.itemFiltrationPump].displayState || items[props.itemFiltrationPump].state"
+              visible: "=items[props.itemFiltrationForcedMode].state == 'ON'"
     - component: oh-list-card
       config:
         title: Chauffage

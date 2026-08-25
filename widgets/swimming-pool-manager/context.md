@@ -146,6 +146,25 @@ same as opening it manually from an item's context menu. Add those keys
 in `widget.yaml` if a specific default view (e.g. last 7 days, averaged)
 turns out to be preferable once tested live.
 
+## Filtration pump becomes read-only under forced filtration (2026-08-25)
+
+When `itemFiltrationForcedMode` is `ON`, "Pompe de filtration" should
+still show the pump's state but no longer be user-controllable. Main
+UI's `oh-toggle-item` has **no native `disabled`/`readonly` config** (not
+documented on the component, and no such generic property exists across
+widgets — only `visible`, `visibleTo`, `class`, `style`), so this is
+implemented as **two mutually-exclusive sibling widgets bound to the same
+item**, gated by the officially documented `visible` expression:
+- `oh-toggle-item` (interactive) — `visible` when
+  `itemFiltrationForcedMode` state is **not** `ON`.
+- `oh-label-item` (read-only, with a "Verrouillée (filtration forcée
+  active)" subtitle so the change in behavior is self-explanatory) —
+  `visible` when it **is** `ON`.
+
+This is the safer, documented approach compared to e.g. a CSS
+`pointer-events: none` hack on the toggle, which isn't a confirmed/
+supported pattern for this widget.
+
 ## Known issues / TODO
 
 - **Not validated against a running openHAB 5.x instance** — this
