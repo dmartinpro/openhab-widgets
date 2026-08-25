@@ -20,7 +20,7 @@ defaults match the real items currently in use:
 - `swimmingpoolHeaterPower` — switch, heat pump on/off
 - `Poolex_Jetblack_FI_7_mode` — string/enum, heat pump operating mode
 - `swimmingPoolWaterTemperatureSetpoint` — number, heat pump target water temperature
-- `Pool_Controller_Temperature_Eau_Injection_Piscine` — number (read-only display), inlet water temperature at the heat pump
+- `Pool_Controller_Temperature_Eau_Injection_Piscine` — number (read-only display), water temperature leaving the pool as it enters the filtration circuit (labeled "Température eau provenance piscine" — opposes "Température eau injectée piscine" below)
 - `Pool_Controller_Temperature_Eau_Piscine` — number (read-only display), water temperature injected back into the pool
 
 ## Config parameters
@@ -118,6 +118,16 @@ instead of a drag slider. Decisions validated with the user beforehand:
 `oh-slider-item`) — commands are sent immediately per step/repeat tick,
 and the displayed value's formatting comes from the item's own state
 description, not a widget-level unit override.
+
+## Label clarification: "provenance piscine" vs "injectée piscine" (2026-08-25)
+
+`itemInputWaterTemperature` was originally labeled "Température eau entrée
+PAC", which was misleading: this item actually reads the water temperature
+as it **leaves the pool**, before entering the filtration circuit — not a
+heat-pump-specific reading. Renamed to **"Température eau provenance
+piscine"**, chosen to read as the counterpart of the other label,
+**"Température eau injectée piscine"** (`itemPoolWaterTemperature`): one
+is water leaving the pool, the other is water returning to it.
 
 ## Known issues / TODO
 

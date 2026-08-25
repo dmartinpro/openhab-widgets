@@ -148,7 +148,7 @@ slots:
           - component: oh-label-item
             config:
               item: =props.itemInputWaterTemperature
-              title: Température eau entrée PAC
+              title: Température eau provenance piscine
               icon: f7:thermometer
               after: "=items[props.itemInputWaterTemperature].displayState || items[props.itemInputWaterTemperature].state"
           - component: oh-label-item
