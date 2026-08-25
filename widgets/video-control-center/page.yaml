@@ -3,11 +3,16 @@ config:
   icon: f7:video_camera
 blocks:
   - component: oh-block
+    config: {}
     slots:
       default:
-        - component: widget:video_control_center
-          config:
-            frigateUrl: "http://frigate.local:5000"
+        - component: oh-grid-cells
+          config: {}
+          slots:
+            default:
+              - component: widget:video_control_center
+                config:
+                  frigateUrl: "https://surveillance.example.com"
 masonry: []
 grid: []
 canvas: []

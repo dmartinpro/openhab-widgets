@@ -75,11 +75,24 @@ code editor in Main UI settings (Pages are provisioned the same
 copy-paste way as this project's widgets — see root
 [CLAUDE.md](../../CLAUDE.md)), *after* `video_control_center` has
 already been created as a widget with that exact uid, since the page
-references it by `widget:video_control_center`. Update the
-placeholder `frigateUrl` value in `page.yaml` (currently
-`http://frigate.local:5000`) to the real Frigate address before use —
-it's set directly in the page's widget instantiation, not re-prompted
-at runtime.
+references it by `widget:video_control_center`. `frigateUrl` is
+already set to the real address
+(`https://surveillance.example.com`) directly on the widget
+instantiation inside `page.yaml` — update it there if the address
+changes.
+
+### Fix (2026-08-25): widget didn't render — missing `oh-grid-cells` wrapper
+
+Reported after pasting into a live Page: the widget didn't appear.
+The user added it correctly via the visual page editor's widget
+picker (rather than hand-typing the reference) and shared the
+resulting generated code, which revealed the actual required nesting:
+`oh-block` → `oh-grid-cells` → `widget:video_control_center`. Our
+version had `widget:video_control_center` sitting directly in
+`oh-block`'s `default` slot, skipping the `oh-grid-cells` layer —
+`component: widget:<uid>` was the right syntax (confirmed by the live
+export), the missing intermediate container was the actual bug.
+`page.yaml` now matches the live-confirmed structure exactly.
 
 **Where this file lives:** kept inside `widgets/video-control-center/`
 rather than under `sitemaps/` — the root CLAUDE.md reserves `sitemaps/`
@@ -91,13 +104,11 @@ consistency.
 
 ## Known issues / TODO
 
-- **Not validated against a running openHAB 5.x instance** — no server
-  access from this environment (see root [CLAUDE.md](../../CLAUDE.md)).
-  `page.yaml`'s top-level shape (`config`/`blocks`/`masonry`/`grid`/
-  `canvas`) has since been confirmed against a live Page code editor
-  (see the 2026-08-25 schema correction above), but the `oh-block` +
-  `widget:video_control_center` content nested inside `blocks` hasn't
-  been seen rendered yet.
+- `page.yaml`'s full structure (`config`/`blocks`/`masonry`/`grid`/
+  `canvas` top level, `oh-block` → `oh-grid-cells` →
+  `widget:video_control_center` nesting) is now confirmed against a
+  live Page — both schema corrections above came from pasted output of
+  the real editor, not guesswork.
 - **Frigate may block iframe embedding.** Some Frigate deployments set
   `X-Frame-Options`/CSP headers that prevent being embedded in an
   iframe from a different origin. If the frame shows blank/refused
