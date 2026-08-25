@@ -244,6 +244,7 @@ slots:
                     display: grid
                     grid-template-columns: "1fr"
                     grid-template-rows: "1fr"
+                    height: 3rem
                     overflow: hidden
                 slots:
                   default:
@@ -275,6 +276,7 @@ slots:
                     display: grid
                     grid-template-columns: "1fr"
                     grid-template-rows: "1fr"
+                    height: 3rem
                     overflow: hidden
                 slots:
                   default:

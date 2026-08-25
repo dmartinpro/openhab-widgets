@@ -289,6 +289,26 @@ enough that the temperature text stays legible on top; adjust both (and
 optionally `trendGradient`, which defaults to a blue gradient) once seen
 on a real instance.
 
+### Fix (2026-08-25): rows rendered much taller than a normal list row
+
+Reported after live testing (persistence confirmed present on both
+items): each row's height ballooned well past a normal list-item row.
+Cause: the grid wrapper had no explicit `height`, only
+`grid-template-rows: 1fr` — with an `auto`-sized container, `1fr` just
+means "one row", not a fixed size, so the row grew to fit its tallest
+child's *intrinsic* size. `oh-trend`'s underlying `vue-trend` SVG has no
+configurable height and defaults to something much taller than a list
+row; `height: 100%` on it was meaningless without a definite height on
+its parent to be a percentage *of*.
+
+Fixed by giving each wrapper `div` an explicit `height: 3rem` (roughly a
+standard list-item row height) alongside its existing `overflow: hidden`
+— this gives `height: 100%` on the `oh-trend`/`oh-label-item` children
+something concrete to resolve against, and clips whatever the trend
+SVG's natural size would otherwise be to that fixed 3rem row. Adjust
+`3rem` in `widget.yaml` (both occurrences) if it still doesn't match the
+other rows' height exactly once seen live.
+
 ## Known issues / TODO
 
 - **Not validated against a running openHAB 5.x instance** — this
