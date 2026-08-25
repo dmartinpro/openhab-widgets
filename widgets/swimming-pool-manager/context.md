@@ -54,11 +54,11 @@ defaults match the real items currently in use:
   field, computed with an inline JS object-literal lookup against the same
   French label map used for `actionOptions`, falling back to the raw state
   if the value isn't in the map.
-- **Setpoint slider** (`oh-slider-item`) defaults to **15–32°C, step 0.5**,
-  `releaseOnly: true` (command sent only when the user releases the
-  handle, to avoid flooding the heat pump with commands while dragging).
-  Adjust `min`/`max`/`step` in `widget.yaml` if the real hardware range
-  differs.
+- **Setpoint control** (`oh-stepper-item`, replacing an earlier slider —
+  see 2026-08-25 note below) defaults to **15–32°C, step 0.5**, with
+  `autorepeat`/`autorepeatDynamic` enabled so holding `+`/`-` accelerates
+  through a larger change. Adjust `min`/`max`/`step` in `widget.yaml` if
+  the real hardware range differs.
 - **Temperature readouts** (`oh-label-item`) show `displayState` (falls
   back to raw `state`) so they respect any unit/formatting already defined
   on the item's state description.
@@ -100,6 +100,24 @@ an explicit column/width set on whatever list/grid/popup is invoking
 how the widget is being opened (equipment/group default widget vs. a
 manual `action: popup` on a link/list item) so the parent's own
 width/column config can be adjusted instead.
+
+## Setpoint control: slider → stepper (2026-08-25)
+
+Replaced `oh-slider-item` with `oh-stepper-item` (`-` / value / `+`) for
+`itemWaterTemperatureSetpoint`, per user request for discrete +/- control
+instead of a drag slider. Decisions validated with the user beforehand:
+- **Replace, not add** — a single control per item, no redundant slider
+  left alongside it.
+- **Value shown inline** between the buttons (component default) rather
+  than `buttonsOnly` + a separate `after` field.
+- **`autorepeat` + `autorepeatDynamic`** enabled — holding a button
+  accelerates the change, useful for larger adjustments (e.g. +3°C)
+  without many individual taps.
+
+`oh-stepper-item` has no `unit`/`releaseOnly` config (unlike
+`oh-slider-item`) — commands are sent immediately per step/repeat tick,
+and the displayed value's formatting comes from the item's own state
+description, not a widget-level unit override.
 
 ## Known issues / TODO
 

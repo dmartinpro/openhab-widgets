@@ -135,7 +135,7 @@ slots:
               action: options
               actionItem: =props.itemHeaterMode
               actionOptions: "Auto=Auto,Heat=Chauffe Eco,SilentHeat=Chauffe Silencieuse,BoostHeat=Chauffe Boost,Cool=Refroidissement Eco,SilentCool=Refroidissement Silencieux,BoostCool=Refroidissement Boost"
-          - component: oh-slider-item
+          - component: oh-stepper-item
             config:
               item: =props.itemWaterTemperatureSetpoint
               title: Consigne température eau
@@ -143,9 +143,8 @@ slots:
               min: 15
               max: 32
               step: 0.5
-              unit: "°C"
-              label: true
-              releaseOnly: true
+              autorepeat: true
+              autorepeatDynamic: true
           - component: oh-label-item
             config:
               item: =props.itemInputWaterTemperature
