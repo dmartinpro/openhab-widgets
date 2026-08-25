@@ -86,6 +86,13 @@ Fix applied to the root `div`'s `style`:
   braces for a plain block parent.
 - Each `oh-list-card` also got an explicit `style: {width: 100%}`, since
   card components can carry their own intrinsic/shrink-to-fit width.
+- **Follow-up (2026-08-25):** that `width: 100%` combined with the F7
+  card's own default horizontal margin caused the opposite problem — the
+  card rendered slightly *wider* than the popup, producing a horizontal
+  scrollbar. Added `margin: 0` alongside `width: 100%` on each
+  `oh-list-card`'s `style` to remove that default margin; vertical
+  spacing between cards still comes entirely from the root `div`'s
+  `gap: 1rem`, so nothing is lost.
 
 Also fixed a **duplicated temperature value** on the setpoint slider
 (`29 °C29 °C`): `oh-slider-item` already displays its own current value
