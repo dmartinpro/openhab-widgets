@@ -38,8 +38,11 @@ defaults match the real items currently in use:
 
 ## Layout notes
 
-- Root is a plain `div` (flexbox column, `gap: 1rem`) holding three
-  `oh-list-card` sections — one per section, as decided: "Commandes
+- Root is a plain `div` (flexbox column, `gap: 1rem`) holding a widget
+  title ("Centre commande piscine", 2026-08-25 — a plain `div` with
+  `config.content`, the generic-HTML-tag way to set text content in Main
+  UI YAML, styled inline rather than via an `f7-block-title`) followed by
+  three `oh-list-card` sections — one per section, as decided: "Commandes
   spéciales", "Filtration", "Chauffage". `oh-list-card` was chosen over
   `f7-card` + manual `div`s because it natively provides the Main UI list
   styling for the row-style item widgets (`oh-toggle-item`,
