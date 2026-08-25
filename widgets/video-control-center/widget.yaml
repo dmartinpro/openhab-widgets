@@ -1,0 +1,18 @@
+uid: video_control_center
+tags: []
+props:
+  parameterGroups: []
+  parameters: []
+component: div
+config:
+  style:
+    display: flex
+    flex-direction: column
+    gap: 1rem
+    width: 100%
+    max-width: 100%
+    flex: 1 1 100%
+    grid-column: 1 / -1
+    box-sizing: border-box
+slots:
+  default: []
