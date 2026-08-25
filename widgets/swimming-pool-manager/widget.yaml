@@ -151,9 +151,13 @@ slots:
               title: Température eau provenance piscine
               icon: f7:thermometer
               after: "=items[props.itemInputWaterTemperature].displayState || items[props.itemInputWaterTemperature].state"
+              action: analyzer
+              actionAnalyzerItems: =props.itemInputWaterTemperature
           - component: oh-label-item
             config:
               item: =props.itemPoolWaterTemperature
               title: Température eau injectée piscine
               icon: f7:thermometer
               after: "=items[props.itemPoolWaterTemperature].displayState || items[props.itemPoolWaterTemperature].state"
+              action: analyzer
+              actionAnalyzerItems: =props.itemPoolWaterTemperature

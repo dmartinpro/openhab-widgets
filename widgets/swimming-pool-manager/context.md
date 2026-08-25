@@ -129,6 +129,23 @@ piscine"**, chosen to read as the counterpart of the other label,
 **"Température eau injectée piscine"** (`itemPoolWaterTemperature`): one
 is water leaving the pool, the other is water returning to it.
 
+## Tap-to-analyze on the two temperature readouts (2026-08-25)
+
+Both temperature `oh-label-item` rows ("Température eau provenance
+piscine" / "Température eau injectée piscine") now open the built-in
+Main UI **Analyzer** (historic chart) for their respective item on tap,
+via:
+```yaml
+action: analyzer
+actionAnalyzerItems: =props.item...
+```
+No `actionAnalyzerChartType`/`actionAnalyzerCoordSystem`/
+`actionAnalyzerAggregation` were set, so the analyzer opens with its own
+defaults (dynamic period, time coordinate system, no aggregation) — the
+same as opening it manually from an item's context menu. Add those keys
+in `widget.yaml` if a specific default view (e.g. last 7 days, averaged)
+turns out to be preferable once tested live.
+
 ## Known issues / TODO
 
 - **Not validated against a running openHAB 5.x instance** — this
