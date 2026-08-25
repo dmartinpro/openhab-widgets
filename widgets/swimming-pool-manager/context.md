@@ -204,17 +204,50 @@ what only ever renders as a small inline icon (~28–32px).
 - The widget title is just our own root `div` — turned into a small
   flex row (`display:flex; align-items:center; gap:0.5rem`) with an
   `img` (the data URI) followed by the text `div`.
-- The "Filtration" and "Chauffage" `oh-list-card`s no longer use the
-  plain `title` config. Instead they use the card's **`header` slot**
-  (confirmed by reading `oh-list-card.vue`/`oh-card.vue` source on
-  GitHub: `oh-list-card` is a thin wrapper around `oh-card`, whose
-  `header` slot — when supplied — *fully replaces* the default
-  `<f7-card-header><div>{{title}}</div></f7-card-header>` rendering).
-  Each header slot re-creates an `f7-card-header` manually, containing
-  the same icon+text flex row as the title, so the native card header
-  padding/styling is preserved.
 - "Commandes spéciales" was left as a plain `title:` string — no icon
   was requested for that section.
+
+### Fix (2026-08-25): `oh-list-card`'s `header` slot doesn't actually work
+
+The first version of this feature put the Filtration/Chauffage icon+text
+row in the card's `header` slot (reasoning: `oh-card.vue`'s own template
+has `<slot name="header"><f7-card-header v-if="config.title">...`, so a
+supplied `header` slot should override the plain-text title). **This
+broke in the real UI: both section titles disappeared entirely — no
+icon, no text.**
+
+Root cause, found by reading `oh-list-card.vue`'s source on GitHub:
+`oh-list-card` is not a passthrough wrapper — its template is
+```vue
+<oh-card :context="context">
+  <template #content>
+    <oh-list :context="cardChildContext(context.component)" />
+  </template>
+</oh-card>
+```
+It only ever forwards the **`content`** slot to the underlying `oh-card`.
+Any `header` (or `footer`) slot defined in the widget YAML under an
+`oh-list-card` is never read by anything — Vue slots have to be
+explicitly relayed by each wrapper component, and this one only relays
+`content`. So the custom header slot was silently dropped, and since we
+had also removed the card's `title:` config (in favor of the — dead —
+header slot), `oh-card`'s own fallback (`v-if="config.title"`) had
+nothing to render either. Both mechanisms failed at once, hence a
+completely empty header.
+
+**Actual fix:** stopped relying on any card-internal header mechanism.
+Each of "Filtration" and "Chauffage" is now a plain wrapper `div`
+(`flex-direction: column`, `gap: 0.5rem`) containing two siblings:
+1. The icon+text row (identical pattern to the widget title), sitting
+   visually above the card.
+2. The `oh-list-card` itself, with no `title:` at all (so `oh-card`
+   renders no header block, avoiding a redundant/empty one) — just its
+   list of `oh-toggle-item`/`oh-label-item`/etc. rows in `content`.
+
+The wrapper's own `gap: 0.5rem` keeps the label tight against its card,
+while the root widget's `gap: 1rem` still separates whole sections from
+each other. This only touches presentation — no config parameter names,
+item bindings, or `visible` logic changed.
 
 ## Known issues / TODO
 
@@ -231,7 +264,7 @@ what only ever renders as a small inline icon (~28–32px).
   these same value/label mappings (common for heat pump binding channels),
   the explicit `actionOptions` here is redundant but harmless; it exists so
   the widget is self-contained even if that item-level metadata is absent.
-- The `oh-list-card` `header` slot override (used for the Filtration/
-  Chauffage icons) is based on reading the component's Vue source on
-  GitHub, not on a live render — verify the icon+title row looks right
-  (spacing, vertical alignment) once opened in a real instance.
+- The Filtration/Chauffage icon+title rows (now plain sibling `div`s
+  above their `oh-list-card`, see the 2026-08-25 fix note above) haven't
+  been visually confirmed live yet either — verify spacing/alignment
+  once opened in a real instance.
