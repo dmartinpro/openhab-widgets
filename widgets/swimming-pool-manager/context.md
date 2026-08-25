@@ -175,6 +175,47 @@ This is the safer, documented approach compared to e.g. a CSS
 `pointer-events: none` hack on the toggle, which isn't a confirmed/
 supported pattern for this widget.
 
+## Section icons via embedded base64 images (2026-08-25)
+
+Added an icon next to the widget title and next to the "Filtration" and
+"Chauffage" section titles, per user request, using **base64 data URIs
+embedded directly in `widget.yaml`** rather than external image files —
+this was a deliberate choice (discussed and confirmed with the user)
+over two alternatives: (a) deploying PNGs to a static folder on the
+openHAB server and referencing them by URL, or (b) registering them as
+a custom classic icon set. Both alternatives would have split the
+widget across two things to deliver/keep in sync; embedding keeps
+`widget.yaml` fully self-contained and copy-paste portable.
+
+**Source files** are kept at
+[assets/](assets/) (`swimming-pool.png`, `water-pump.png`,
+`air-source-heat-pump.png`, 512×512 originals) — keep these around as
+the source of truth if the icons ever need to be re-cropped or
+re-encoded at a different size; they are not referenced by the widget
+directly (git-tracked for provenance only, not consumed at runtime).
+
+**Encoding process:** resized each source PNG to **64×64** with `sips`
+(macOS) before base64-encoding, to keep the embedded strings small
+(~6–10 KB each, ~24 KB total added to the YAML) — full-resolution
+512×512 originals would have made the file unnecessarily large for
+what only ever renders as a small inline icon (~28–32px).
+
+**Placement mechanics:**
+- The widget title is just our own root `div` — turned into a small
+  flex row (`display:flex; align-items:center; gap:0.5rem`) with an
+  `img` (the data URI) followed by the text `div`.
+- The "Filtration" and "Chauffage" `oh-list-card`s no longer use the
+  plain `title` config. Instead they use the card's **`header` slot**
+  (confirmed by reading `oh-list-card.vue`/`oh-card.vue` source on
+  GitHub: `oh-list-card` is a thin wrapper around `oh-card`, whose
+  `header` slot — when supplied — *fully replaces* the default
+  `<f7-card-header><div>{{title}}</div></f7-card-header>` rendering).
+  Each header slot re-creates an `f7-card-header` manually, containing
+  the same icon+text flex row as the title, so the native card header
+  padding/styling is preserved.
+- "Commandes spéciales" was left as a plain `title:` string — no icon
+  was requested for that section.
+
 ## Known issues / TODO
 
 - **Not validated against a running openHAB 5.x instance** — this
@@ -190,3 +231,7 @@ supported pattern for this widget.
   these same value/label mappings (common for heat pump binding channels),
   the explicit `actionOptions` here is redundant but harmless; it exists so
   the widget is self-contained even if that item-level metadata is absent.
+- The `oh-list-card` `header` slot override (used for the Filtration/
+  Chauffage icons) is based on reading the component's Vue source on
+  GitHub, not on a live render — verify the icon+title row looks right
+  (spacing, vertical alignment) once opened in a real instance.
