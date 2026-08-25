@@ -249,6 +249,46 @@ while the root widget's `gap: 1rem` still separates whole sections from
 each other. This only touches presentation — no config parameter names,
 item bindings, or `visible` logic changed.
 
+## Background temperature trend on the two readouts (2026-08-25)
+
+Both temperature `oh-label-item` rows now show a subtle historic trend
+line behind their text, using the System widget **`oh-trend`**
+(`trendItem`, low `opacity`) — the component openHAB documents
+specifically as "designed to render as a background visualization"
+behind other content, not a standalone chart (that role is already
+covered by the tap-to-open Analyzer added earlier).
+
+**Conflicts with the house "no absolute positioning" rule** ([CLAUDE.md](../../CLAUDE.md)) —
+layering a background trend behind foreground text is fundamentally a
+stacking problem that flexbox alone can't express (flexbox lays
+siblings out in a line, it doesn't overlap them). The usual way to do
+this is `position: absolute`, which this project avoids. Instead, each
+row is a `div` with `display: grid; grid-template-columns: 1fr;
+grid-template-rows: 1fr`, and **both** the `oh-trend` and the
+`oh-label-item` are placed in that same single grid cell
+(`grid-column: 1; grid-row: 1`) — this achieves the overlap purely
+through CSS Grid stacking, with no `position: absolute`/`fixed`
+anywhere. `overflow: hidden` on the wrapper keeps the trend line's SVG
+(whose exact height isn't configurable — it comes from the underlying
+`vue-trend` library default) clipped to the row's bounds.
+
+The `oh-label-item` needed an explicit `style: {background: transparent}`
+override — list-item rows have an opaque background by default (matching
+the card/page background), which would otherwise fully hide the trend
+line sitting behind it.
+
+**Prerequisite:** like the Analyzer action added earlier, `oh-trend`
+needs the item to have **persisted history** (a persistence service —
+rrd4j, InfluxDB, etc. — configured for `itemInputWaterTemperature` /
+`itemPoolWaterTemperature`). Without persisted data the trend line will
+simply render empty/flat.
+
+**Not visually verified live** — `trendStrokeWidth: 2` and
+`opacity: 0.25` are reasonable starting guesses to keep the line subtle
+enough that the temperature text stays legible on top; adjust both (and
+optionally `trendGradient`, which defaults to a blue gradient) once seen
+on a real instance.
+
 ## Known issues / TODO
 
 - **Not validated against a running openHAB 5.x instance** — this

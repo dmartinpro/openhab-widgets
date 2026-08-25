@@ -238,19 +238,65 @@ slots:
                   step: 0.5
                   autorepeat: true
                   autorepeatDynamic: true
-              - component: oh-label-item
+              - component: div
                 config:
-                  item: =props.itemInputWaterTemperature
-                  title: Température eau provenance piscine
-                  icon: f7:thermometer
-                  after: "=items[props.itemInputWaterTemperature].displayState || items[props.itemInputWaterTemperature].state"
-                  action: analyzer
-                  actionAnalyzerItems: =props.itemInputWaterTemperature
-              - component: oh-label-item
+                  style:
+                    display: grid
+                    grid-template-columns: "1fr"
+                    grid-template-rows: "1fr"
+                    overflow: hidden
+                slots:
+                  default:
+                    - component: oh-trend
+                      config:
+                        trendItem: =props.itemInputWaterTemperature
+                        trendStrokeWidth: 2
+                        style:
+                          grid-column: "1"
+                          grid-row: "1"
+                          width: 100%
+                          height: 100%
+                          opacity: "0.25"
+                    - component: oh-label-item
+                      config:
+                        item: =props.itemInputWaterTemperature
+                        title: Température eau provenance piscine
+                        icon: f7:thermometer
+                        after: "=items[props.itemInputWaterTemperature].displayState || items[props.itemInputWaterTemperature].state"
+                        action: analyzer
+                        actionAnalyzerItems: =props.itemInputWaterTemperature
+                        style:
+                          grid-column: "1"
+                          grid-row: "1"
+                          background: transparent
+              - component: div
                 config:
-                  item: =props.itemPoolWaterTemperature
-                  title: Température eau injectée piscine
-                  icon: f7:thermometer
-                  after: "=items[props.itemPoolWaterTemperature].displayState || items[props.itemPoolWaterTemperature].state"
-                  action: analyzer
-                  actionAnalyzerItems: =props.itemPoolWaterTemperature
+                  style:
+                    display: grid
+                    grid-template-columns: "1fr"
+                    grid-template-rows: "1fr"
+                    overflow: hidden
+                slots:
+                  default:
+                    - component: oh-trend
+                      config:
+                        trendItem: =props.itemPoolWaterTemperature
+                        trendStrokeWidth: 2
+                        style:
+                          grid-column: "1"
+                          grid-row: "1"
+                          width: 100%
+                          height: 100%
+                          opacity: "0.25"
+                    - component: oh-label-item
+                      config:
+                        item: =props.itemPoolWaterTemperature
+                        title: Température eau injectée piscine
+                        icon: f7:thermometer
+                        after: "=items[props.itemPoolWaterTemperature].displayState || items[props.itemPoolWaterTemperature].state"
+                        action: analyzer
+                        actionAnalyzerItems: =props.itemPoolWaterTemperature
+                        style:
+                          grid-column: "1"
+                          grid-row: "1"
+                          background: transparent
