@@ -34,7 +34,32 @@ None — purely URL-driven, no openHAB items bound.
 
 Added [page.yaml](page.yaml), a standalone Main UI **Page** (not a
 widget) that embeds this widget via `component: widget:video_control_center`.
-Reason: a Page opened via a Group/Equipment's automatic "tap to open
+
+**Schema correction (2026-08-25):** the first version of this file used
+`uid` / `tags` / `component: oh-layout-page` / `slots.default` at the
+top level — a structure inferred from a community post about the
+*file-provisioning* format (`conf/pages/*.yaml`, wrapped in a
+`version`/`pages` map). The actual single-Page YAML shown by Main UI's
+own code editor (confirmed live by the user) has **no `uid`/`component`
+at the top at all** — a page's id lives outside its YAML, managed by
+the Pages list itself. Instead the real top-level shape is:
+```yaml
+config:
+  label: ...
+  icon: ...
+blocks: []
+masonry: []
+grid: []
+canvas: []
+```
+— one array per layout mode Main UI supports (stacked blocks, masonry
+grid, fixed grid, freeform canvas), all present even when unused. Our
+content (the `oh-block` wrapping `widget:video_control_center`) now
+lives under `blocks`, the standard "Responsive Layout" mode; the other
+three arrays are left empty.
+
+This page still exists for the same reason as before: a Page opened via
+a Group/Equipment's automatic "tap to open
 default widget" is wrapped in a **popup**, and Main UI popups are
 capped at a fixed ~630×630px dialog on tablet/desktop screens (full
 screen only on phones) — far too small for browsing Frigate's own
@@ -68,10 +93,11 @@ consistency.
 
 - **Not validated against a running openHAB 5.x instance** — no server
   access from this environment (see root [CLAUDE.md](../../CLAUDE.md)).
-  In particular, `page.yaml`'s top-level shape (`config.label` for the
-  title, `component: oh-layout-page`, `oh-block` wrapper) is based on a
-  community-confirmed file-provisioning example, not a live editor
-  export — double check it pastes cleanly into the Page code editor.
+  `page.yaml`'s top-level shape (`config`/`blocks`/`masonry`/`grid`/
+  `canvas`) has since been confirmed against a live Page code editor
+  (see the 2026-08-25 schema correction above), but the `oh-block` +
+  `widget:video_control_center` content nested inside `blocks` hasn't
+  been seen rendered yet.
 - **Frigate may block iframe embedding.** Some Frigate deployments set
   `X-Frame-Options`/CSP headers that prevent being embedded in an
   iframe from a different origin. If the frame shows blank/refused

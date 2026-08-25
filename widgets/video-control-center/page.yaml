@@ -1,14 +1,13 @@
-uid: video_control_center_page
-tags: []
 config:
   label: Video Control Center
   icon: f7:video_camera
-component: oh-layout-page
-slots:
-  default:
-    - component: oh-block
-      slots:
-        default:
-          - component: widget:video_control_center
-            config:
-              frigateUrl: "http://frigate.local:5000"
+blocks:
+  - component: oh-block
+    slots:
+      default:
+        - component: widget:video_control_center
+          config:
+            frigateUrl: "http://frigate.local:5000"
+masonry: []
+grid: []
+canvas: []
