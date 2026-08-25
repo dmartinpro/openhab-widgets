@@ -309,6 +309,21 @@ SVG's natural size would otherwise be to that fixed 3rem row. Adjust
 `3rem` in `widget.yaml` (both occurrences) if it still doesn't match the
 other rows' height exactly once seen live.
 
+### Fix (2026-08-25): trend line was centered, moved to the right edge
+
+Reported after live testing: with `width: 100%` on `oh-trend`, the
+sparkline stretched across the entire row, reading visually as
+"centered" through the middle of the row rather than sitting behind the
+value/icon area on the right. Changed each `oh-trend`'s style to
+`justify-self: end` + `width: 50%` (was `width: 100%`, no
+`justify-self`) — since both `oh-trend` and `oh-label-item` share the
+same grid cell (`grid-column: 1; grid-row: 1`) but `oh-label-item` has
+no `justify-self` override, it still stretches to the row's full width
+by default, so the label/icon/value all render normally on top while
+the trend itself is now confined and right-aligned within that same
+cell. Adjust the `50%` in `widget.yaml` (both occurrences) if the
+sparkline should cover more or less of the row's right side.
+
 ## Known issues / TODO
 
 - **Not validated against a running openHAB 5.x instance** — this
