@@ -6,13 +6,18 @@ blocks:
     config: {}
     slots:
       default:
-        - component: oh-grid-cells
+        - component: oh-grid-row
           config: {}
           slots:
             default:
-              - component: widget:video_control_center
+              - component: oh-grid-col
                 config:
-                  frigateUrl: "https://surveillance.example.com"
+                  width: "100"
+                slots:
+                  default:
+                    - component: widget:video_control_center
+                      config:
+                        frigateUrl: "https://surveillance.example.com"
 masonry: []
 grid: []
 canvas: []
