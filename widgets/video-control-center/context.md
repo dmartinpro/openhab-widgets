@@ -118,6 +118,33 @@ standalone Pages get added later across the project, consider
 promoting this to a dedicated top-level `pages/` folder instead for
 consistency.
 
+## Hiding Frigate's sidebar for the embed (2026-08-25)
+
+Frigate has no native option to hide its left sidebar/menu (confirmed:
+no documented config or URL parameter, and a
+[2021 feature request](https://github.com/blakeblackshear/frigate/issues/1891)
+for exactly this was closed with no visible resolution). The workaround
+is a reverse-proxy CSS injection, kept as
+[nginx-frigate-embed.conf](nginx-frigate-embed.conf) in this folder —
+not itself openHAB YAML, but the infrastructure config `frigateUrl`
+depends on. It:
+- Proxies Frigate normally on `location /` for regular browsing.
+- Uses an nginx `map` on the `embed` query parameter (`$arg_embed`) to
+  conditionally splice a sidebar-hiding `<style>` tag into the HTML
+  response via `sub_filter`, only when the URL has `?embed=1` —
+  avoiding a second `location` block on a different path, which risks
+  breaking Frigate's client-side (React) router since it doesn't know
+  about any path other than its own.
+- `page.yaml`'s `frigateUrl` should point at this proxy with `?embed=1`
+  appended (e.g. `https://frigate.example.com/?embed=1`), not
+  at Frigate directly.
+
+**Not verified live**: the `nav` CSS selector used to hide the sidebar
+is a starting guess (semantic tag, chosen over a Tailwind utility class
+since those tend to change between Frigate versions) — inspect the
+actual DOM in a browser and adjust the selector in
+`nginx-frigate-embed.conf` if `nav` doesn't match.
+
 ## Known issues / TODO
 
 - `page.yaml`'s top-level shape (`config`/`blocks`/`masonry`/`grid`/
