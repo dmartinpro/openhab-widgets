@@ -1,0 +1,366 @@
+uid: diagral_alarm_controller
+tags: []
+props:
+  parameterGroups:
+  - name: control
+    label: Batch Control (required)
+  - name: zone1
+    label: Zone 1
+  - name: zone2
+    label: Zone 2 (optional)
+  - name: zone3
+    label: Zone 3 (optional)
+  - name: zone4
+    label: Zone 4 (optional)
+  - name: colors
+    label: Colors
+  - name: status
+    label: Status (optional)
+  parameters:
+  - name: activateGroupsItem
+    label: Activate Groups Item
+    type: TEXT
+    context: item
+    description: String item linked to the alarm-system Thing's activate-groups channel (diagral:group-batch-activate). Receives a comma-separated list of numeric group IDs in one command.
+    required: true
+    groupName: control
+  - name: disableGroupsItem
+    label: Disable Groups Item
+    type: TEXT
+    context: item
+    description: String item linked to the alarm-system Thing's disable-groups channel (diagral:group-batch-disable). Receives a comma-separated list of numeric group IDs in one command.
+    required: true
+    groupName: control
+  - name: zone1Item
+    label: Zone 1 Item
+    type: TEXT
+    context: item
+    description: 'Switch item linked to this zone''s active channel (read-only for this widget: shows selection/armed state).'
+    required: true
+    groupName: zone1
+  - name: zone1GroupId
+    label: Zone 1 Group ID
+    type: INTEGER
+    description: Numeric Diagral group ID for this zone (the group Thing's own ID, not necessarily the zone slot number). Sent to activate-groups/disable-groups.
+    required: true
+    groupName: zone1
+  - name: zone1Label
+    label: Zone 1 Label
+    type: TEXT
+    required: false
+    defaultValue: Zone 1
+    groupName: zone1
+  - name: zone1Icon
+    label: Zone 1 Icon
+    type: TEXT
+    context: icon
+    required: false
+    defaultValue: f7:house_fill
+    groupName: zone1
+  - name: zone2Item
+    label: Zone 2 Item
+    type: TEXT
+    context: item
+    description: Switch item linked to this zone's active channel (read-only for this widget). Leave empty to use only 2 or 3 zones.
+    required: false
+    groupName: zone2
+  - name: zone2GroupId
+    label: Zone 2 Group ID
+    type: INTEGER
+    description: Numeric Diagral group ID for this zone. Required if Zone 2 Item is set.
+    required: false
+    groupName: zone2
+  - name: zone2Label
+    label: Zone 2 Label
+    type: TEXT
+    required: false
+    defaultValue: Zone 2
+    groupName: zone2
+  - name: zone2Icon
+    label: Zone 2 Icon
+    type: TEXT
+    context: icon
+    required: false
+    defaultValue: f7:bed_double_fill
+    groupName: zone2
+  - name: zone3Item
+    label: Zone 3 Item
+    type: TEXT
+    context: item
+    description: Switch item linked to this zone's active channel (read-only for this widget). Leave empty to skip.
+    required: false
+    groupName: zone3
+  - name: zone3GroupId
+    label: Zone 3 Group ID
+    type: INTEGER
+    description: Numeric Diagral group ID for this zone. Required if Zone 3 Item is set.
+    required: false
+    groupName: zone3
+  - name: zone3Label
+    label: Zone 3 Label
+    type: TEXT
+    required: false
+    defaultValue: Zone 3
+    groupName: zone3
+  - name: zone3Icon
+    label: Zone 3 Icon
+    type: TEXT
+    context: icon
+    required: false
+    defaultValue: f7:building_2_fill
+    groupName: zone3
+  - name: zone4Item
+    label: Zone 4 Item
+    type: TEXT
+    context: item
+    description: Switch item linked to this zone's active channel (read-only for this widget). Leave empty to skip.
+    required: false
+    groupName: zone4
+  - name: zone4GroupId
+    label: Zone 4 Group ID
+    type: INTEGER
+    description: Numeric Diagral group ID for this zone. Required if Zone 4 Item is set.
+    required: false
+    groupName: zone4
+  - name: zone4Label
+    label: Zone 4 Label
+    type: TEXT
+    required: false
+    defaultValue: Zone 4
+    groupName: zone4
+  - name: zone4Icon
+    label: Zone 4 Icon
+    type: TEXT
+    context: icon
+    required: false
+    defaultValue: f7:car_fill
+    groupName: zone4
+  - name: activeColor
+    label: Active Zone Color
+    type: COLOR
+    description: Background fill for a zone button whose activeItem is ON.
+    required: false
+    defaultValue: '#e53935'
+    groupName: colors
+  - name: selectedBorderColor
+    label: Selected Zone Border Color
+    type: COLOR
+    description: Border shown on a zone button while it's selected.
+    required: false
+    defaultValue: '#424242'
+    groupName: colors
+  - name: activateColor
+    label: Central Button "Activate" Tint
+    type: COLOR
+    description: Icon tint when the central button proposes activating.
+    required: false
+    defaultValue: '#43a047'
+    groupName: colors
+  - name: deactivateColor
+    label: Central Button "Deactivate" Tint
+    type: COLOR
+    description: Icon tint when the central button proposes deactivating.
+    required: false
+    defaultValue: '#e53935'
+    groupName: colors
+  - name: armedStatusItem
+    label: Armed Status Item (optional)
+    type: TEXT
+    context: item
+    description: Read-only String item (armed-status channel) to show as a cosmetic label under the ring. Not used for any control logic.
+    required: false
+    groupName: status
+component: div
+config:
+  style:
+    display: flex
+    flex-direction: column
+    align-items: center
+    gap: 0.75rem
+    width: 100%
+    max-width: 100%
+    flex: 1 1 100%
+    grid-column: 1 / -1
+    box-sizing: border-box
+slots:
+  default:
+  - component: oh-context
+    config:
+      variables:
+        selected: []
+        actedProposal: null
+    slots:
+      default:
+      - component: div
+        config:
+          style:
+            display: grid
+            grid-template-columns: 1fr
+            grid-template-rows: 1fr
+            place-items: center
+            width: 17.5rem
+            height: 17.5rem
+            margin: 0 auto
+        slots:
+          default:
+          - component: svg
+            config:
+              viewBox: 0 0 300 300
+              xmlns: http://www.w3.org/2000/svg
+              style:
+                grid-column: '1'
+                grid-row: '1'
+                width: 17.5rem
+                height: 17.5rem
+            slots:
+              default:
+              - component: oh-repeater
+                config:
+                  for: zone
+                  fragment: true
+                  in: '=[props.zone1Item ? { activeItem: props.zone1Item, label: props.zone1Label || ''Zone 1'', icon: props.zone1Icon || ''f7:circle_fill'', index: 0, groupId: props.zone1GroupId } : null, props.zone2Item ? { activeItem: props.zone2Item, label: props.zone2Label || ''Zone 2'', icon: props.zone2Icon || ''f7:circle_fill'', index: 1, groupId: props.zone2GroupId } : null, props.zone3Item ? { activeItem: props.zone3Item, label: props.zone3Label || ''Zone 3'', icon: props.zone3Icon || ''f7:circle_fill'', index: 2, groupId: props.zone3GroupId } : null, props.zone4Item ? { activeItem: props.zone4Item, label: props.zone4Label || ''Zone 4'', icon: props.zone4Icon || ''f7:circle_fill'', index: 3, groupId: props.zone4GroupId } : null].filter(z => z !== null).map((z, i, arr) => ({ activeItem: z.activeItem, label: z.label, icon: z.icon, index: z.index, groupId: z.groupId, midAngle: (360/arr.length)*i, d: `M150,150 L${150+140*Math.sin(((360/arr.length)*i-(180/arr.length))*Math.PI/180)},${150-140*Math.cos(((360/arr.length)*i-(180/arr.length))*Math.PI/180)} A140,140 0 0,1 ${150+140*Math.sin(((360/arr.length)*i+(180/arr.length))*Math.PI/180)},${150-140*Math.cos(((360/arr.length)*i+(180/arr.length))*Math.PI/180)} Z` }))'
+                slots:
+                  default:
+                  - component: path
+                    config:
+                      d: =loop.zone.d
+                      fill: '=items[loop.zone.activeItem] && items[loop.zone.activeItem].state === ''ON'' ? props.activeColor : ''lightgrey'''
+                      stroke: '=vars.selected.includes(loop.zone.index) ? props.selectedBorderColor : ''white'''
+                      stroke-width: '3'
+          - component: div
+            config:
+              style:
+                grid-column: '1'
+                grid-row: '1'
+                display: grid
+                grid-template-columns: 1fr
+                grid-template-rows: 1fr
+                width: 17.5rem
+                height: 17.5rem
+            slots:
+              default:
+              - component: oh-repeater
+                config:
+                  for: zone
+                  fragment: true
+                  in: '=[props.zone1Item ? { activeItem: props.zone1Item, label: props.zone1Label || ''Zone 1'', icon: props.zone1Icon || ''f7:circle_fill'', index: 0, groupId: props.zone1GroupId } : null, props.zone2Item ? { activeItem: props.zone2Item, label: props.zone2Label || ''Zone 2'', icon: props.zone2Icon || ''f7:circle_fill'', index: 1, groupId: props.zone2GroupId } : null, props.zone3Item ? { activeItem: props.zone3Item, label: props.zone3Label || ''Zone 3'', icon: props.zone3Icon || ''f7:circle_fill'', index: 2, groupId: props.zone3GroupId } : null, props.zone4Item ? { activeItem: props.zone4Item, label: props.zone4Label || ''Zone 4'', icon: props.zone4Icon || ''f7:circle_fill'', index: 3, groupId: props.zone4GroupId } : null].filter(z => z !== null).map((z, i, arr) => ({ activeItem: z.activeItem, label: z.label, icon: z.icon, index: z.index, groupId: z.groupId, midAngle: (360/arr.length)*i, d: `M150,150 L${150+140*Math.sin(((360/arr.length)*i-(180/arr.length))*Math.PI/180)},${150-140*Math.cos(((360/arr.length)*i-(180/arr.length))*Math.PI/180)} A140,140 0 0,1 ${150+140*Math.sin(((360/arr.length)*i+(180/arr.length))*Math.PI/180)},${150-140*Math.cos(((360/arr.length)*i+(180/arr.length))*Math.PI/180)} Z` }))'
+                slots:
+                  default:
+                  - component: oh-link
+                    config:
+                      style:
+                        grid-column: '1'
+                        grid-row: '1'
+                        width: 100%
+                        height: 100%
+                        display: flex
+                        align-items: center
+                        justify-content: center
+                        text-decoration: none
+                        color: var(--f7-text-color)
+                        cursor: pointer
+                        clip-path: =`path("${loop.zone.d}")`
+                      action: variable
+                      actionVariable: selected
+                      actionVariableValue: '=vars.selected.includes(loop.zone.index) ? vars.selected.filter(i => i !== loop.zone.index) : vars.selected.concat([loop.zone.index])'
+                    slots:
+                      default:
+                      - component: div
+                        config:
+                          style:
+                            width: '0'
+                            height: '0'
+                            overflow: visible
+                            display: flex
+                            align-items: center
+                            justify-content: center
+                            transform: =`rotate(${loop.zone.midAngle}deg) translate(0, -5.25rem) rotate(${-loop.zone.midAngle}deg)`
+                            flex-direction: column
+                            gap: 0.1rem
+                        slots:
+                          default:
+                          - component: oh-icon
+                            config:
+                              icon: =loop.zone.icon
+                              style:
+                                font-size: 1.3rem
+                                color: '=items[loop.zone.activeItem] && items[loop.zone.activeItem].state === ''ON'' ? ''#ffffff'' : ''#000000'''
+                                flex-shrink: '0'
+                          - component: div
+                            config:
+                              content: =`Group ${loop.zone.groupId}`
+                              style:
+                                font-size: 0.6rem
+                                line-height: '1.1'
+                                text-align: center
+                                max-width: 3.75rem
+                                overflow: hidden
+                                text-overflow: ellipsis
+                                white-space: nowrap
+                                color: '=items[loop.zone.activeItem] && items[loop.zone.activeItem].state === ''ON'' ? ''#ffffff'' : ''#000000'''
+                                flex-shrink: '0'
+                          - component: div
+                            config:
+                              content: =loop.zone.label
+                              style:
+                                font-size: 0.6rem
+                                line-height: '1.1'
+                                text-align: center
+                                max-width: 3.75rem
+                                overflow: hidden
+                                text-overflow: ellipsis
+                                white-space: nowrap
+                                color: '=items[loop.zone.activeItem] && items[loop.zone.activeItem].state === ''ON'' ? ''#ffffff'' : ''#000000'''
+                                flex-shrink: '0'
+          - component: oh-link
+            config:
+              style:
+                grid-column: '1'
+                grid-row: '1'
+                width: 6rem
+                height: 6rem
+                border-radius: 50%
+                box-sizing: border-box
+                display: flex
+                align-items: center
+                justify-content: center
+                text-decoration: none
+                color: '#ffffff'
+                cursor: '=(vars.selected.length===0?(!((props.zone1Item&&items[props.zone1Item]&&items[props.zone1Item].state===''ON'')||(props.zone2Item&&items[props.zone2Item]&&items[props.zone2Item].state===''ON'')||(props.zone3Item&&items[props.zone3Item]&&items[props.zone3Item].state===''ON'')||(props.zone4Item&&items[props.zone4Item]&&items[props.zone4Item].state===''ON''))?''activate'':''deactivate''):(((!vars.selected.includes(0)||(items[props.zone1Item]&&items[props.zone1Item].state===''ON''))&&(!vars.selected.includes(1)||(items[props.zone2Item]&&items[props.zone2Item].state===''ON''))&&(!vars.selected.includes(2)||(items[props.zone3Item]&&items[props.zone3Item].state===''ON''))&&(!vars.selected.includes(3)||(items[props.zone4Item]&&items[props.zone4Item].state===''ON'')))?''deactivate'':(((!vars.selected.includes(0)||!(items[props.zone1Item]&&items[props.zone1Item].state===''ON''))&&(!vars.selected.includes(1)||!(items[props.zone2Item]&&items[props.zone2Item].state===''ON''))&&(!vars.selected.includes(2)||!(items[props.zone3Item]&&items[props.zone3Item].state===''ON''))&&(!vars.selected.includes(3)||!(items[props.zone4Item]&&items[props.zone4Item].state===''ON'')))?''activate'':''disabled''))) !== ''disabled'' ? ''pointer'' : ''not-allowed'''
+                opacity: '=(vars.selected.length===0?(!((props.zone1Item&&items[props.zone1Item]&&items[props.zone1Item].state===''ON'')||(props.zone2Item&&items[props.zone2Item]&&items[props.zone2Item].state===''ON'')||(props.zone3Item&&items[props.zone3Item]&&items[props.zone3Item].state===''ON'')||(props.zone4Item&&items[props.zone4Item]&&items[props.zone4Item].state===''ON''))?''activate'':''deactivate''):(((!vars.selected.includes(0)||(items[props.zone1Item]&&items[props.zone1Item].state===''ON''))&&(!vars.selected.includes(1)||(items[props.zone2Item]&&items[props.zone2Item].state===''ON''))&&(!vars.selected.includes(2)||(items[props.zone3Item]&&items[props.zone3Item].state===''ON''))&&(!vars.selected.includes(3)||(items[props.zone4Item]&&items[props.zone4Item].state===''ON'')))?''deactivate'':(((!vars.selected.includes(0)||!(items[props.zone1Item]&&items[props.zone1Item].state===''ON''))&&(!vars.selected.includes(1)||!(items[props.zone2Item]&&items[props.zone2Item].state===''ON''))&&(!vars.selected.includes(2)||!(items[props.zone3Item]&&items[props.zone3Item].state===''ON''))&&(!vars.selected.includes(3)||!(items[props.zone4Item]&&items[props.zone4Item].state===''ON'')))?''activate'':''disabled''))) !== ''disabled'' ? ''1'' : ''0.6'''
+                background: '=(vars.selected.length===0?(!((props.zone1Item&&items[props.zone1Item]&&items[props.zone1Item].state===''ON'')||(props.zone2Item&&items[props.zone2Item]&&items[props.zone2Item].state===''ON'')||(props.zone3Item&&items[props.zone3Item]&&items[props.zone3Item].state===''ON'')||(props.zone4Item&&items[props.zone4Item]&&items[props.zone4Item].state===''ON''))?''activate'':''deactivate''):(((!vars.selected.includes(0)||(items[props.zone1Item]&&items[props.zone1Item].state===''ON''))&&(!vars.selected.includes(1)||(items[props.zone2Item]&&items[props.zone2Item].state===''ON''))&&(!vars.selected.includes(2)||(items[props.zone3Item]&&items[props.zone3Item].state===''ON''))&&(!vars.selected.includes(3)||(items[props.zone4Item]&&items[props.zone4Item].state===''ON'')))?''deactivate'':(((!vars.selected.includes(0)||!(items[props.zone1Item]&&items[props.zone1Item].state===''ON''))&&(!vars.selected.includes(1)||!(items[props.zone2Item]&&items[props.zone2Item].state===''ON''))&&(!vars.selected.includes(2)||!(items[props.zone3Item]&&items[props.zone3Item].state===''ON''))&&(!vars.selected.includes(3)||!(items[props.zone4Item]&&items[props.zone4Item].state===''ON'')))?''activate'':''disabled''))) === ''disabled'' ? ''lightgrey'' : ((vars.selected.length===0?(!((props.zone1Item&&items[props.zone1Item]&&items[props.zone1Item].state===''ON'')||(props.zone2Item&&items[props.zone2Item]&&items[props.zone2Item].state===''ON'')||(props.zone3Item&&items[props.zone3Item]&&items[props.zone3Item].state===''ON'')||(props.zone4Item&&items[props.zone4Item]&&items[props.zone4Item].state===''ON''))?''activate'':''deactivate''):(((!vars.selected.includes(0)||(items[props.zone1Item]&&items[props.zone1Item].state===''ON''))&&(!vars.selected.includes(1)||(items[props.zone2Item]&&items[props.zone2Item].state===''ON''))&&(!vars.selected.includes(2)||(items[props.zone3Item]&&items[props.zone3Item].state===''ON''))&&(!vars.selected.includes(3)||(items[props.zone4Item]&&items[props.zone4Item].state===''ON'')))?''deactivate'':(((!vars.selected.includes(0)||!(items[props.zone1Item]&&items[props.zone1Item].state===''ON''))&&(!vars.selected.includes(1)||!(items[props.zone2Item]&&items[props.zone2Item].state===''ON''))&&(!vars.selected.includes(2)||!(items[props.zone3Item]&&items[props.zone3Item].state===''ON''))&&(!vars.selected.includes(3)||!(items[props.zone4Item]&&items[props.zone4Item].state===''ON'')))?''activate'':''disabled''))) === ''activate'' ? props.activateColor : props.deactivateColor)'
+                pointer-events: none
+              action: variable
+              actionVariable: actedProposal
+              actionVariableValue: '=((vars.selected.length===0?(!((props.zone1Item&&items[props.zone1Item]&&items[props.zone1Item].state===''ON'')||(props.zone2Item&&items[props.zone2Item]&&items[props.zone2Item].state===''ON'')||(props.zone3Item&&items[props.zone3Item]&&items[props.zone3Item].state===''ON'')||(props.zone4Item&&items[props.zone4Item]&&items[props.zone4Item].state===''ON''))?''activate'':''deactivate''):(((!vars.selected.includes(0)||(items[props.zone1Item]&&items[props.zone1Item].state===''ON''))&&(!vars.selected.includes(1)||(items[props.zone2Item]&&items[props.zone2Item].state===''ON''))&&(!vars.selected.includes(2)||(items[props.zone3Item]&&items[props.zone3Item].state===''ON''))&&(!vars.selected.includes(3)||(items[props.zone4Item]&&items[props.zone4Item].state===''ON'')))?''deactivate'':(((!vars.selected.includes(0)||!(items[props.zone1Item]&&items[props.zone1Item].state===''ON''))&&(!vars.selected.includes(1)||!(items[props.zone2Item]&&items[props.zone2Item].state===''ON''))&&(!vars.selected.includes(2)||!(items[props.zone3Item]&&items[props.zone3Item].state===''ON''))&&(!vars.selected.includes(3)||!(items[props.zone4Item]&&items[props.zone4Item].state===''ON'')))?''activate'':''disabled''))) !== ''disabled'' && vars.actedProposal !== (vars.selected.length===0?(!((props.zone1Item&&items[props.zone1Item]&&items[props.zone1Item].state===''ON'')||(props.zone2Item&&items[props.zone2Item]&&items[props.zone2Item].state===''ON'')||(props.zone3Item&&items[props.zone3Item]&&items[props.zone3Item].state===''ON'')||(props.zone4Item&&items[props.zone4Item]&&items[props.zone4Item].state===''ON''))?''activate'':''deactivate''):(((!vars.selected.includes(0)||(items[props.zone1Item]&&items[props.zone1Item].state===''ON''))&&(!vars.selected.includes(1)||(items[props.zone2Item]&&items[props.zone2Item].state===''ON''))&&(!vars.selected.includes(2)||(items[props.zone3Item]&&items[props.zone3Item].state===''ON''))&&(!vars.selected.includes(3)||(items[props.zone4Item]&&items[props.zone4Item].state===''ON'')))?''deactivate'':(((!vars.selected.includes(0)||!(items[props.zone1Item]&&items[props.zone1Item].state===''ON''))&&(!vars.selected.includes(1)||!(items[props.zone2Item]&&items[props.zone2Item].state===''ON''))&&(!vars.selected.includes(2)||!(items[props.zone3Item]&&items[props.zone3Item].state===''ON''))&&(!vars.selected.includes(3)||!(items[props.zone4Item]&&items[props.zone4Item].state===''ON'')))?''activate'':''disabled'')))) ? (vars.selected.length===0?(!((props.zone1Item&&items[props.zone1Item]&&items[props.zone1Item].state===''ON'')||(props.zone2Item&&items[props.zone2Item]&&items[props.zone2Item].state===''ON'')||(props.zone3Item&&items[props.zone3Item]&&items[props.zone3Item].state===''ON'')||(props.zone4Item&&items[props.zone4Item]&&items[props.zone4Item].state===''ON''))?''activate'':''deactivate''):(((!vars.selected.includes(0)||(items[props.zone1Item]&&items[props.zone1Item].state===''ON''))&&(!vars.selected.includes(1)||(items[props.zone2Item]&&items[props.zone2Item].state===''ON''))&&(!vars.selected.includes(2)||(items[props.zone3Item]&&items[props.zone3Item].state===''ON''))&&(!vars.selected.includes(3)||(items[props.zone4Item]&&items[props.zone4Item].state===''ON'')))?''deactivate'':(((!vars.selected.includes(0)||!(items[props.zone1Item]&&items[props.zone1Item].state===''ON''))&&(!vars.selected.includes(1)||!(items[props.zone2Item]&&items[props.zone2Item].state===''ON''))&&(!vars.selected.includes(2)||!(items[props.zone3Item]&&items[props.zone3Item].state===''ON''))&&(!vars.selected.includes(3)||!(items[props.zone4Item]&&items[props.zone4Item].state===''ON'')))?''activate'':''disabled''))) : vars.actedProposal'
+            slots:
+              default:
+              - component: oh-link
+                config:
+                  style:
+                    width: 100%
+                    height: 100%
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    text-decoration: none
+                    pointer-events: auto
+                  action: '=(vars.selected.length===0?(!((props.zone1Item&&items[props.zone1Item]&&items[props.zone1Item].state===''ON'')||(props.zone2Item&&items[props.zone2Item]&&items[props.zone2Item].state===''ON'')||(props.zone3Item&&items[props.zone3Item]&&items[props.zone3Item].state===''ON'')||(props.zone4Item&&items[props.zone4Item]&&items[props.zone4Item].state===''ON''))?''activate'':''deactivate''):(((!vars.selected.includes(0)||(items[props.zone1Item]&&items[props.zone1Item].state===''ON''))&&(!vars.selected.includes(1)||(items[props.zone2Item]&&items[props.zone2Item].state===''ON''))&&(!vars.selected.includes(2)||(items[props.zone3Item]&&items[props.zone3Item].state===''ON''))&&(!vars.selected.includes(3)||(items[props.zone4Item]&&items[props.zone4Item].state===''ON'')))?''deactivate'':(((!vars.selected.includes(0)||!(items[props.zone1Item]&&items[props.zone1Item].state===''ON''))&&(!vars.selected.includes(1)||!(items[props.zone2Item]&&items[props.zone2Item].state===''ON''))&&(!vars.selected.includes(2)||!(items[props.zone3Item]&&items[props.zone3Item].state===''ON''))&&(!vars.selected.includes(3)||!(items[props.zone4Item]&&items[props.zone4Item].state===''ON'')))?''activate'':''disabled''))) === ''disabled'' ? ''none'' : ''command'''
+                  actionItem: '=(vars.selected.length===0?(!((props.zone1Item&&items[props.zone1Item]&&items[props.zone1Item].state===''ON'')||(props.zone2Item&&items[props.zone2Item]&&items[props.zone2Item].state===''ON'')||(props.zone3Item&&items[props.zone3Item]&&items[props.zone3Item].state===''ON'')||(props.zone4Item&&items[props.zone4Item]&&items[props.zone4Item].state===''ON''))?''activate'':''deactivate''):(((!vars.selected.includes(0)||(items[props.zone1Item]&&items[props.zone1Item].state===''ON''))&&(!vars.selected.includes(1)||(items[props.zone2Item]&&items[props.zone2Item].state===''ON''))&&(!vars.selected.includes(2)||(items[props.zone3Item]&&items[props.zone3Item].state===''ON''))&&(!vars.selected.includes(3)||(items[props.zone4Item]&&items[props.zone4Item].state===''ON'')))?''deactivate'':(((!vars.selected.includes(0)||!(items[props.zone1Item]&&items[props.zone1Item].state===''ON''))&&(!vars.selected.includes(1)||!(items[props.zone2Item]&&items[props.zone2Item].state===''ON''))&&(!vars.selected.includes(2)||!(items[props.zone3Item]&&items[props.zone3Item].state===''ON''))&&(!vars.selected.includes(3)||!(items[props.zone4Item]&&items[props.zone4Item].state===''ON'')))?''activate'':''disabled''))) === ''activate'' ? props.activateGroupsItem : props.disableGroupsItem'
+                  actionCommand: '=[props.zone1Item && (vars.selected.length===0||vars.selected.includes(0)) ? props.zone1GroupId : null, props.zone2Item && (vars.selected.length===0||vars.selected.includes(1)) ? props.zone2GroupId : null, props.zone3Item && (vars.selected.length===0||vars.selected.includes(2)) ? props.zone3GroupId : null, props.zone4Item && (vars.selected.length===0||vars.selected.includes(3)) ? props.zone4GroupId : null].filter(id => id !== null && id !== undefined && id !== '''').join('','')'
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: f7:shield_lefthalf_fill
+                      style:
+                        font-size: 2.5rem
+                        color: '#ffffff'
+  - component: div
+    config:
+      visible: =!!props.armedStatusItem
+      content: '=props.armedStatusItem ? (items[props.armedStatusItem].displayState || items[props.armedStatusItem].state) : '''''
+      style:
+        font-size: 0.8rem
+        opacity: '0.7'
+        text-align: center
