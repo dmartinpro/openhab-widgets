@@ -34,10 +34,21 @@ not exposed as props on purpose.
 
 ## Layout notes
 
-- Root is a flex column; the two columns sit in a flex row
-  (`justify-content: space-around`), each column a flex column
-  (circle, label).
-- The circle is a fixed 5rem `div` with `flex: none` (avoids the
+- The root `div` is styled to match a native `oh-label-cell` in an
+  `oh-grid-cells` block: it fills its grid slot (`width/height: 100%`) and uses
+  the theme's card variables (`background: var(--f7-card-bg-color)`,
+  `border-radius: var(--f7-card-border-radius)`), so it follows light/dark
+  themes. Those variables are an assumption about what `oh-cell` uses
+  internally; if the corners or shade differ from the neighbouring cells on
+  your instance, inspect a label cell in the browser dev tools and copy its
+  values here.
+- Content is sized to fit a phone-width cell (about 178×128 CSS px, two per
+  row): 3.2rem circles, 0.8rem labels, 0.75rem timestamp, 0.5rem padding. On
+  wider layouts the cell is larger and the content simply stays centered.
+- Inside the root, a flex row holds the two columns
+  (`justify-content: space-around`), each column a flex column (circle,
+  label), with the timestamp line below.
+- The circle is a fixed 3.2rem `div` with `flex: none` (avoids the
   border-box flex-shrink oval bug), `border-radius: 50%`. Its text is empty
   for the three real colors and "N/A" for the fallback — one lookup into
   `vars.tempo` drives background, box-shadow and text.

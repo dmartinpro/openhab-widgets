@@ -13,7 +13,9 @@ contract: today's color, tomorrow's color, and when they were last updated.
 - Shows the **last update time** on a single line underneath
   (`YYYY-MM-DD HH:mm`).
 
-The widget is display-only: it sends no commands.
+The widget is display-only: it sends no commands. It is styled as a card
+(theme card background and corner radius) so it sits next to native
+`oh-label-cell`s in an `oh-grid-cells` block.
 
 ## About Tempo
 
