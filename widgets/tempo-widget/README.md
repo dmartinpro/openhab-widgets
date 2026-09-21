@@ -6,7 +6,7 @@ contract: today's color, tomorrow's color, and when they were last updated.
 ## What it does
 
 - Shows two glossy 3D "control light" circles side by side, labeled
-  **Today** and **Tomorrow**, lit in the Tempo color of that day: **blue**,
+  **Today** and **Tomorrow** (configurable), lit in the Tempo color of that day: **blue**,
   **white** or **red**.
 - Shows an unlit grey circle with **N/A** when the item holds anything else — the
   error value, `NULL`, `UNDEF`, or an item that isn't bound.
@@ -57,8 +57,8 @@ If your source uses another spelling (`Blue`, `bleu`, ...), map it to
 
 1. In Main UI, go to **Developer Tools → Widgets → +** and paste in the
    contents of [`widget.yaml`](widget.yaml). Save.
-2. Add the widget to a page and set its three config parameters to the
-   Items above.
+2. Add the widget to a page and set its three Item parameters to the Items
+   above. The two labels are optional (e.g. `Aujourd'hui` / `Demain`).
 
 ## Config parameters
 
@@ -67,6 +67,8 @@ If your source uses another spelling (`Blue`, `bleu`, ...), map it to
 | `todayItem` | Item (String) | yes | Color for the current day |
 | `tomorrowItem` | Item (String) | yes | Color for the next day |
 | `timestampItem` | Item (DateTime) | yes | Last successful update |
+| `todayLabel` | Text | no | Label under the left circle. Defaults to `Today` |
+| `tomorrowLabel` | Text | no | Label under the right circle. Defaults to `Tomorrow` |
 
 ## Colors
 

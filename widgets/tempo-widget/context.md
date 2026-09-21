@@ -25,6 +25,8 @@ All passed in via `props`, nothing hardcoded:
 | `todayItem` | TEXT (item picker) | — | Required |
 | `tomorrowItem` | TEXT (item picker) | — | Required |
 | `timestampItem` | TEXT (item picker) | — | Required |
+| `todayLabel` | TEXT | `Today` | Optional. Label under the left circle; empty falls back to `Today` |
+| `tomorrowLabel` | TEXT | `Tomorrow` | Optional. Label under the right circle; empty falls back to `Tomorrow` |
 
 Colors are fixed in the `tempo` variable of the root `oh-context`: per state,
 `bg` (the gradient stack: highlight, then light/base/dark shades), `shadow`
@@ -34,17 +36,25 @@ not exposed as props on purpose.
 
 ## Layout notes
 
-- The root `div` is styled to match a native `oh-label-cell` in an
-  `oh-grid-cells` block: it fills its grid slot (`width/height: 100%`) and uses
-  the theme's card variables (`background: var(--f7-card-bg-color)`,
-  `border-radius: var(--f7-card-border-radius)`), so it follows light/dark
-  themes. Those variables are an assumption about what `oh-cell` uses
-  internally; if the corners or shade differ from the neighbouring cells on
-  your instance, inspect a label cell in the browser dev tools and copy its
-  values here.
-- Content is sized to fit a phone-width cell (about 178×128 CSS px, two per
-  row): 3.2rem circles, 0.8rem labels, 0.75rem timestamp, 0.5rem padding. On
-  wider layouts the cell is larger and the content simply stays centered.
+- The root `div` copies the computed style of a native `oh-label-cell`
+  (`.card.oh-cell.label-cell`), measured on the live instance (2026-09-21):
+  fixed `height: 120px`, `margin: 10px 5px` (a grid slot is 171px wide on a
+  phone, so the card is 161px wide), `background: var(--f7-card-bg-color)`,
+  `border-radius: var(--f7-card-border-radius)` (8px),
+  `box-shadow: 0px 5px 10px #00000026`, `position: relative`,
+  `overflow: hidden`, `user-select: none`, `font-size: 16px`. A property-by-
+  property comparison of the live widget against a native cell showed no
+  remaining difference in those. The fixed 120px comes from openHAB's
+  `.oh-cell { height/min/max-height: 120px }`; the margin from
+  `--f7-card-expandable-margin-*` and the shadow from
+  `--f7-card-expandable-box-shadow`, which are only defined on `.oh-cell`
+  itself, hence the hardcoded values. If openHAB changes those in a future
+  release, update them here.
+- The widget sits inside an `oh-cell-container` (`display: block`), which
+  gives it no height of its own — that's why `height: 100%` did not work and
+  an explicit 120px is needed.
+- Content is sized to fit inside 120px with 0.5rem padding: 3.2rem circles,
+  0.8rem labels, 0.75rem timestamp.
 - Inside the root, a flex row holds the two columns
   (`justify-content: space-around`), each column a flex column (circle,
   label), with the timestamp line below.
@@ -70,6 +80,6 @@ not exposed as props on purpose.
 
 ## Known issues / TODO
 
-- Not yet deployed/verified against a live openHAB instance. The circle look
-  was checked by rendering the same CSS in headless Chrome (light and dark
-  card backgrounds), not in Main UI itself.
+- Card styling verified against the live instance (dark theme, phone width)
+  by comparing computed styles with the neighbouring label cells. Not
+  re-checked on the light theme or on tablet/desktop widths.

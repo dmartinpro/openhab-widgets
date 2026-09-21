@@ -20,6 +20,16 @@ props:
     context: item
     description: DateTime item holding the last successful update time. Shown as YYYY-MM-DD HH:mm.
     required: true
+  - name: todayLabel
+    label: Today Label
+    type: TEXT
+    description: Label under the left circle. Defaults to "Today" when empty.
+    required: false
+  - name: tomorrowLabel
+    label: Tomorrow Label
+    type: TEXT
+    description: Label under the right circle. Defaults to "Tomorrow" when empty.
+    required: false
 component: div
 config:
   style:
@@ -28,12 +38,17 @@ config:
     align-items: center
     justify-content: center
     gap: 0.4rem
-    width: 100%
-    height: 100%
+    height: 120px
+    margin: 10px 5px
     box-sizing: border-box
     padding: 0.5rem
+    position: relative
+    overflow: hidden
+    user-select: none
+    font-size: 16px
     background: 'var(--f7-card-bg-color, #ffffff)'
-    border-radius: var(--f7-card-border-radius, 10px)
+    border-radius: var(--f7-card-border-radius, 8px)
+    box-shadow: '0px 5px 10px #00000026'
 slots:
   default:
   - component: oh-context
@@ -99,7 +114,7 @@ slots:
                     box-shadow: '=(vars.tempo[items[props.todayItem] && items[props.todayItem].state] || vars.tempo.NA).shadow'
               - component: div
                 config:
-                  content: Today
+                  content: '=props.todayLabel || ''Today'''
                   style:
                     font-weight: '600'
                     font-size: 0.8rem
@@ -135,7 +150,7 @@ slots:
                     box-shadow: '=(vars.tempo[items[props.tomorrowItem] && items[props.tomorrowItem].state] || vars.tempo.NA).shadow'
               - component: div
                 config:
-                  content: Tomorrow
+                  content: '=props.tomorrowLabel || ''Tomorrow'''
                   style:
                     font-weight: '600'
                     font-size: 0.8rem
