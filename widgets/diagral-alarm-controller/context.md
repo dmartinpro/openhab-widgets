@@ -874,7 +874,194 @@ mechanism itself works) but that scratch widget only toggled a throwaway
   on every child of a zero-sized flex anchor container — needed the
   moment it holds more than one child, not just when it's a grid overlay.
 
-## Known issues / TODO
+### Second follow-up (2026-09-11): selection now shown by darkening, not by border
+
+- Selection indicator changed after live user feedback ("hard to
+  distinguish a selected group"): the wedge `<path>` gained
+  `filter: brightness(0.75)` when `vars.selected.includes(loop.zone.index)`,
+  darkening whichever fill is currently showing (lightgrey → grey,
+  `activeColor` → a darker shade of it) without needing a second
+  configurable color — `filter` uniformly darkens whatever's underneath,
+  so it stays correct for any `activeColor` the user picks.
+- Once the darkening carried the selection signal, the border became
+  redundant and was reverted to always `white` (`stroke: white`, no
+  longer a `vars.selected`-conditional expression) per explicit request —
+  `selectedBorderColor` the config param still exists (unused now) since
+  removing a param wasn't asked for; flag to the user if it should be
+  dropped entirely in a future pass.
+
+### Third follow-up (2026-09-11): target-aware click debounce + "pending" tint
+
+**Root cause of two user-reported bugs, diagnosed together:** (1) widget
+appeared not to update after a real click ("clicked, activated 2 groups,
+widget stayed unchanged") and (2) the physical alarm audibly activated
+*twice*, ~30–60s apart, from what was meant to be one action. Root cause
+for both: the binding polls rather than pushes (see spec §7 above,
+`diagralalarmwidgetinstructions.md`) — the real Item can lag the real
+alarm's actual state by tens of seconds. Nothing in the widget stopped a
+second click during that lag from sending a second, genuinely duplicate
+real command — `vars.actedProposal` existed and looked like a debounce,
+but nothing ever gated the command on it; it only fed the button's own
+tint. The user clicked once, saw no visible change, assumed it hadn't
+worked, and clicked again — sending a real second command that the alarm
+dutifully executed.
+
+**Design considered and rejected:** a flat cooldown via a new proxy
+Switch item with Expire-binding metadata (`expire="90s,command=OFF"`).
+Solid and simple, but blunt — it would also block a *legitimate* new
+action (e.g. arming a different zone) during the same window, and
+needs new openHAB-side setup (a new Item + metadata) outside the widget.
+
+**What shipped instead — target-aware debounce, no new Item:**
+- `vars.actedProposal` (dead weight — set but never read anywhere else
+  in the file) replaced by `vars.lastSentCommand`, which stores the
+  *exact* thing last sent: `` `${targetItem}|${targetIds}` `` — e.g.
+  `Diagral_Activate_Groups|1,2` — not just the coarse `activate`/
+  `deactivate` label `actedProposal` held. This is the actual fix: two
+  different selections can both compute to `"activate"`, so comparing
+  only that label (which is all the old debounce attempt did) can't
+  distinguish "same click again" from "different legitimate new
+  target." Comparing the full item+ids string can.
+- A click is suppressed (`action: 'none'` on the inner command
+  `oh-link`, same node that sends the real batch command) only when the
+  freshly-recomputed target is **identical** to `vars.lastSentCommand`
+  *and* the proposal isn't `'disabled'`. Change the selection, or wait
+  for the real Items to confirm (which changes what gets computed, e.g.
+  `activate` flips to `deactivate` once the targeted zones report ON) —
+  either one clears the block immediately, no timer involved.
+- Central button gets a third visual state — "busy" — exactly when that
+  same suppression condition holds: a new configurable `pendingColor`
+  (`COLOR`, default `#fb8c00`, orange) replaces the activate/deactivate
+  tint, cursor becomes `wait`, opacity drops to `0.7`. This is the fix
+  for complaint (1) — immediate feedback the instant the button is
+  clicked, not whenever the slow real Item eventually catches up.
+- **Known, accepted limitation:** with no reactive clock available to
+  the expression evaluator (confirmed earlier this session — `items[x]`
+  exposes only `{state, type, displayState}`, nothing time-based), there
+  is no hard timeout. If the real Items genuinely never confirm a
+  specific send, that *specific* target stays suppressed until they do.
+  Mitigations: (a) it's scoped only to the one repeated target, nothing
+  else on the widget is affected; (b) `vars.*` are ephemeral per page
+  load, so reloading the page always clears it instantly, no real state
+  or data at risk. Considered acceptable given the alternative (a new
+  Item + Expire binding) traded a rare manual-reload edge case for a
+  real, everyday false-block on legitimate different actions.
+- Built by extracting the live `PROPOSAL` and `TARGET_IDS` ground-truth
+  substrings via the same cross-check-against-deployed-JSON technique
+  used earlier in this file, then composing the new expressions from
+  those extracted strings in Python — not retyped by hand — specifically
+  to avoid the exact class of transcription bug (one wrong character in
+  a 1000+-character duplicated expression) that bit this widget twice
+  earlier in its history.
+- **Not click-tested** — same standing reason as every real-widget change
+  in this file (real household alarm). The busy tint itself has not been
+  visually confirmed live; only cross-checked for expression balance and
+  structural correctness against the deployed JSON.
+
+### Fourth follow-up (2026-09-11): two real bugs from live use — stale selection carried into a later, unrelated click
+
+**User-reported:** (1) selecting only "Group 2" and clicking central armed
+Group 1 *and* Group 2, not just Group 2; (2) after activating, the
+selected wedge(s) stayed visually selected instead of clearing.
+
+**Diagnosis before touching anything:** re-read the live `actionCommand`
+(the exact ID-list-building expression) and confirmed it was already
+correct in isolation — given `vars.selected = [2]` alone, it computes
+`"2"`, not `"1,2"`. The only way two zones could get targeted from one
+click is if `vars.selected` actually held `[1, 2]` at click time. Since
+nothing ever cleared `vars.selected` after a send, a zone selected during
+an *earlier, separate* interaction earlier in the same page session (never
+navigated away, so the widget's `oh-context` vars never reset) stayed
+selected indefinitely and silently combined with whatever was selected
+next. **Bug (1) is a downstream consequence of bug (2), not an
+independent logic error** — confirmed by reading the code before writing
+any fix, rather than patching the ID-list expression, which was never
+broken.
+
+**Fix:** a third stacked click-action layer on the central button, wrapped
+*around* the existing two (bubble order in this widget is innermost-first
+— the actual `pointer-events:auto` click target fires first, then each
+ancestor fires in turn as the event bubbles up). Nesting order, fire
+order, innermost→outermost:
+1. sends the real command (reads `vars.selected` as the user left it — unchanged)
+2. sets `vars.lastSentCommand` (also reads `vars.selected` before anything clears it — unchanged)
+3. **new** — clears `vars.selected` to `[]`, but only when `PROPOSAL !== 'disabled'`
+   (i.e. only when the click was actually actionable; a click during a
+   genuinely mixed/disabled selection leaves the selection alone rather
+   than silently wiping it)
+
+Getting the *nesting* direction right here was the entire risk: if the
+new "clear" layer had been nested any more deeply than the other two (or
+if `selected` had been cleared on the innermost/first-fired layer instead
+of the outermost/last-fired one), the command computed in that same click
+would have read the *already-cleared* `vars.selected` instead of what the
+user actually selected — silently turning every selective arm/disarm into
+a full arm/disarm. Verified the final nesting by reading the deployed
+JSON back and walking `component` → `slots.default[0]` three levels deep
+before deploying, not just balance-checking expressions.
+
+**One consciously accepted tradeoff, flagged to the user, not yet
+addressed:** because an *empty* selection means "act on every configured
+zone" (existing, intentional design), clearing the selection immediately
+after a send means a rapid second click on the central button — before
+re-selecting anything — now targets *all* zones rather than being
+recognized as a leftover repeat of the first click. The existing
+target-aware debounce only blocks *exact repeats* of the last sent
+command; an empty-selection "activate everything" is a different command
+by that comparison, so it is not blocked. This is a new-ish shape of the
+same double-click risk the debounce was built for, specifically for the
+"single zone, then immediately double-click" sequence. Not fixed in this
+pass — the user asked for the selection-clearing behavior specifically
+and this tradeoff was called out rather than silently designed around.
+
+### Fifth follow-up (2026-09-11): central button wasn't actually a circle — diagnosed, not guessed
+
+**User-reported:** hover made the central button go transparent; the
+white border ring (added earlier this session) wasn't a consistent
+width all the way around; user suspected the button itself might not be
+a true circle.
+
+**Diagnosed by reading computed layout on the live DOM before writing
+any fix** (`getBoundingClientRect`/`getComputedStyle` on all 3 stacked
+`oh-link` layers, then hovering — a pure mouse-move, no click, so safe
+against the real alarm — and re-reading computed `opacity`). Two
+distinct, unrelated root causes, both from the same source: `oh-link`
+renders as `<a class="link">`, and Framework7 (the underlying component
+library) ships default CSS for `.link` that this widget had never
+needed to override before now:
+
+1. **Not a circle, confirmed by measurement**: the middle (color-fill)
+   layer measured `90×96px`, not `96×96px`. Framework7's `.link`
+   defaults to `display: flex`. The outer ring layer uses
+   `box-sizing: border-box`, so its own 3px border eats into its content
+   box (96px declared → 90px available for children). The middle layer
+   was hardcoded to `width: 6rem` (96px, an absolute value with no
+   awareness of its parent's border) — flexbox's default `flex-shrink: 1`
+   then squeezed that width down to fit the 90px available space, while
+   height (the flex cross-axis, governed by `align-items: stretch` vs. an
+   explicit height — explicit height wins) stayed at the full 96px.
+   Result: oval, and the visible border-ring gap around it necessarily
+   uneven (bug reported as "border inconsistent" was a symptom, not the
+   actual defect).
+   **Fix**: changed the middle and inner layers from a hardcoded
+   `6rem`/`6rem` to `width: 100%; height: 100%` — sized relative to
+   whatever their parent's content box actually is, rather than an
+   absolute value that silently drifts out of sync the moment the
+   parent's border width changes. More robust than special-casing this
+   one 90-vs-96 mismatch. Verified post-fix: middle and inner both
+   measure exactly `90×90`.
+2. **Hover transparency**: Framework7's default `.link:hover` rule sets
+   `opacity: 0.65`. This widget only ever set an explicit `opacity` on
+   the middle layer (the busy/activate/deactivate tint logic) — the
+   outer ring and inner click-target layer had no opacity of their own,
+   so the framework default silently applied to them on hover, fading
+   the border and icon. Fix: explicit `opacity: '1'` on both, which
+   (being inline styles) always wins over the stylesheet's `:hover` rule
+   regardless of hover state.
+
+Both confirmed live: hovered the real button (`el.matches(':hover')`
+verified true) and re-read computed `opacity` — `1` on all three layers,
+before and during hover. No click involved at any point.
 
 - **Real Diagral hardware/binding responsiveness is not always reliable.**
   Observed the three real zone `Switch` items change state (including
