@@ -18,10 +18,14 @@ that goes with them.
   shift between minor 5.x releases; flag anything version-sensitive
 - Widgets are authored in **YAML** using the standard Main UI structure:
   `component` / `config` / `slots`
-- No direct network access to a running openHAB server from this
+- By default there is no access to a running openHAB server from this
   environment — YAML is authored and reviewed here, then copied manually
   into openHAB by the user. Do not assume the ability to query the REST API,
-  validate against live items, or hot-reload a sitemap.
+  validate against live items, or hot-reload a sitemap. **Exception:** when
+  the user explicitly gives access (e.g. a local Docker instance plus an API
+  token created by them), deploying and testing live is allowed — see
+  "Deploying via the REST API" below. Never create tokens or enter
+  credentials yourself, and revoke/stop using a token when told to.
 
 ## Layout and styling conventions
 
@@ -131,6 +135,10 @@ openHAB instance. Apply them proactively, not just when a bug matches.
   inside `<svg>` (a stray `<div>` breaks SVG content), and whenever the
   repeated children need to individually participate in a shared CSS Grid
   stack (see below).
+- A flex child that can hold intrinsic content (notably an `<img>`) has
+  `min-width: auto`, so it will not shrink below the image's natural size
+  and pushes its siblings out of the card (e.g. a gauge drawn outside the
+  right edge). Give such children `min-width: 0` in addition to `flex: 1 1 …`.
 
 ### CSS Grid overlay stacking
 
@@ -180,6 +188,54 @@ openHAB instance. Apply them proactively, not just when a bug matches.
   just silently wrong — so it won't be caught by parse validation alone;
   grep for `' #[0-9a-fA-F]'` across style values and quote the whole value
   whenever a hex color follows a space (`border: '1px solid #c7c7c7'`).
+
+- Widget YAML (Main UI code editor / files in this repo) and the REST JSON
+  differ slightly: a parameter's `defaultValue` is `default` in the JSON.
+  The Main UI "create widget" code editor also expects a wrapper
+  (`version: 1` / `widgets:` / `<uid>:`) with no `uid` line inside.
+
+### Deploying via the REST API (only when the user grants access)
+
+- Create: `POST /rest/ui/components/ui:widget` with the full body including
+  `uid`. Update: `PUT /rest/ui/components/ui:widget/<uid>` — the body must
+  also include `uid` (400 without it), and PUT on a widget that doesn't
+  exist yet returns 404. Pages work the same way under `ui:page/<uid>`
+  (GET the page, edit the JSON, PUT it back without `editable`/`timestamp`).
+  Reads work anonymously; writes need `Authorization: Bearer <token>`.
+- Prefer REST over typing/pasting into the Main UI code editor for anything
+  large (e.g. embedded base64 images): the editor auto-closes brackets and
+  quotes and corrupts pasted YAML.
+- Build the JSON body from the repo's `widget.yaml` with a script
+  (`yaml.safe_load` → `json.dump`) rather than retyping, then re-GET and check
+  key values (a silently truncated value is easy to miss).
+- `.items` files under the container's `conf/items/` are hot-reloaded and
+  are the only way to change an Item defined there (the UI shows it as "not
+  editable"). Changing an Item's type means editing the file.
+- Main UI routes only work when navigated to from inside the app; typing
+  e.g. `/settings/widgets` in the address bar gives "Not Found". Custom
+  widgets are managed under Developer Tools → Widgets.
+- To find out how Main UI really behaves (action parameters, parameter
+  contexts, ...), download the served JS chunks (`/assets/*.js`, including
+  chunks referenced by other chunks) and grep them; this is faster and more
+  reliable than guessing.
+
+### Modals and widget pickers
+
+- `oh-link` with `action: popup | popover | sheet` needs `actionModal:
+  widget:<uid>` (or `page:<uid>`, or `oh-…`) and passes `actionModalConfig`
+  (an object, values may be `=` expressions) as the target's props. Any other
+  format is ignored.
+- Do not use `popover` from an `oh-link`: Main UI does not pass the clicked
+  element to the popover, so it has no anchor and is pinned to the top-left
+  corner of the screen. Use `popup` (centered) or `sheet`.
+- A popup is about 630px wide on desktop. A widget capped at e.g. `20rem`
+  leaves half of it empty and left-aligned: give the widget an optional
+  `maxWidth` prop and have the opener pass a larger value, and center content
+  with `margin: 0 auto` / `justify-content: center`.
+- A parameter with `type: TEXT` and `context: widget` renders a widget picker
+  (`page` → pages only, `pagewidget` → both; matching is by substring) and
+  yields `widget:<uid>`. `context: props` edits the props of the widget chosen
+  by a `pagewidget` parameter in the same group.
 
 ### Diagnosing "is it the widget or the backend?"
 
