@@ -1,0 +1,77 @@
+uid: Label-Card-Background
+tags: []
+props:
+  parameters:
+  - name: imagepath
+    label: Image path
+    type: TEXT
+    required: false
+  - name: desc
+    label: Label
+    description: Label shown under the image
+    type: TEXT
+    required: false
+  - name: desccolor
+    label: Label color
+    description: CSS color, defaults to the theme text color
+    type: TEXT
+    required: false
+  - name: targetItem
+    label: Item
+    description: Group opened in a popup on click
+    type: TEXT
+    context: item
+    required: false
+  - name: height
+    label: Height
+    description: CSS height of the tile (default 9rem)
+    type: TEXT
+    required: false
+  - name: labelSize
+    label: Label size
+    description: CSS font size of the label (default 1.05rem)
+    type: TEXT
+    required: false
+component: oh-link
+config:
+  action: group
+  actionGroupPopupItem: =props.targetItem
+  style:
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: space-between
+    opacity: 1
+    box-sizing: border-box
+    width: 100%
+    height: '=props.height || ''9rem'''
+    min-width: 0
+    padding: 0.6rem 0.5rem
+    overflow: hidden
+    background: 'var(--f7-card-bg-color, #ffffff)'
+    border-radius: var(--f7-card-border-radius, 8px)
+    color: '=props.desccolor || ''var(--f7-text-color)'''
+slots:
+  default:
+  - component: div
+    config:
+      style:
+        flex: 1 1 0
+        min-height: 0
+        width: 100%
+        background-image: '=''url('' + props.imagepath + '')'''
+        background-position: center
+        background-repeat: no-repeat
+        background-size: contain
+  - component: div
+    config:
+      content: =props.desc
+      style:
+        margin-top: 0.4rem
+        max-width: 100%
+        overflow: hidden
+        text-overflow: ellipsis
+        white-space: nowrap
+        font-size: '=props.labelSize || ''1.05rem'''
+        font-weight: 600
+        line-height: 1.2
