@@ -26,6 +26,7 @@ All passed in via `props`:
 | `batteryItem` | TEXT (item) | — | Required |
 | `modelItem` | TEXT (item) | — | Required |
 | `controlItem` | TEXT (item) | — | Required, forwarded to the popup widget |
+| `modalType` | TEXT (options) | `popup` | `popup` / `sheet`, used as the `oh-link` action |
 | `modalWidget` | TEXT (`context: widget`) | `widget:navimow_mower_card` | Widget opened on click; value format `widget:<uid>` |
 
 ## Layout notes
@@ -56,6 +57,13 @@ names under the same prop names as the main Navimow widget
 widget that uses these prop names works. The `modalWidget` picker uses
 `context: widget` (Main UI's parameter editor offers all widgets, values in
 `widget:<uid>` form).
+
+A popup is ~630px wide on desktop while the main card is capped at 20rem by
+default, which left half of it empty. The widget therefore also passes
+`maxWidth: 32rem` (an optional prop of the main widget) so the card fills
+the popup. `popover` was tried and removed: Main UI does not pass the clicked
+element to `oh-link` modal actions, so the popover has no anchor and is
+pinned to the top-left corner of the screen.
 
 ## Model images
 

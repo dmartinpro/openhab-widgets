@@ -26,6 +26,17 @@ props:
     context: item
     description: String item linked to the mower's control channel. Not used by this card itself; passed on to the extended widget opened on click.
     required: true
+  - name: modalType
+    label: Open As
+    type: TEXT
+    description: How the extended widget is displayed on click, centered (popup) or from the bottom (sheet).
+    required: false
+    defaultValue: popup
+    options:
+    - value: popup
+      label: Popup
+    - value: sheet
+      label: Sheet
   - name: modalWidget
     label: Extended Widget
     type: TEXT
@@ -82,13 +93,14 @@ slots:
             opacity: '1'
             text-decoration: none
             color: inherit
-          action: popup
+          action: '=props.modalType || ''popup'''
           actionModal: '=props.modalWidget || ''widget:navimow_mower_card'''
           actionModalConfig:
             activityItem: '=props.activityItem'
             controlItem: '=props.controlItem'
             batteryItem: '=props.batteryItem'
             modelItem: '=props.modelItem'
+            maxWidth: 32rem
         slots:
           default:
           - component: img
@@ -141,30 +153,29 @@ slots:
               - component: div
                 config:
                   style:
-                    display: flex
-                    flex-direction: column
-                    gap: 0.2rem
+                    display: grid
+                    height: 1.4rem
+                    border-radius: 0.7rem
+                    background: '#757575'
+                    overflow: hidden
                 slots:
                   default:
                   - component: div
                     config:
                       style:
-                        height: 0.5rem
-                        border-radius: 0.25rem
-                        background: '#e0e0e0'
-                        overflow: hidden
-                    slots:
-                      default:
-                      - component: div
-                        config:
-                          style:
-                            height: 100%
-                            width: '=Math.max(0, Math.min(100, Number(items[props.batteryItem] ? items[props.batteryItem].state : 0))) + ''%'''
-                            background: '=Number(items[props.batteryItem] ? items[props.batteryItem].state : 0) <= 20 ? ''#e53935'' : (Number(items[props.batteryItem] ? items[props.batteryItem].state : 0) <= 50 ? ''#fb8c00'' : ''#43a047'')'
-                            transition: width 0.4s ease
+                        grid-area: 1 / 1
+                        width: '=Math.max(0, Math.min(100, Number(items[props.batteryItem] ? items[props.batteryItem].state : 0))) + ''%'''
+                        background: '=Number(items[props.batteryItem] ? items[props.batteryItem].state : 0) <= 20 ? ''#e53935'' : (Number(items[props.batteryItem] ? items[props.batteryItem].state : 0) <= 50 ? ''#fb8c00'' : ''#43a047'')'
+                        transition: width 0.4s ease
                   - component: div
                     config:
                       content: '=(items[props.batteryItem] ? items[props.batteryItem].state : ''-'') + '' %'''
                       style:
+                        grid-area: 1 / 1
+                        justify-self: end
+                        align-self: center
+                        padding-right: 0.4rem
                         font-size: 0.75rem
-                        opacity: '0.7'
+                        font-weight: '600'
+                        color: '#ffffff'
+                        text-shadow: 0 1px 2px rgba(0,0,0,0.6)

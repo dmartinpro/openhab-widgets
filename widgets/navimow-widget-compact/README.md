@@ -37,13 +37,15 @@ channels (see the [main widget's README](../navimow-widget/README.md#item-setup)
 | `batteryItem` | Item (Number) | yes | `battery-level` channel |
 | `modelItem` | Item (String) | yes | `model` channel, selects the image |
 | `controlItem` | Item (String) | yes | `control` channel; only forwarded to the extended widget |
+| `modalType` | Choice | no | How the extended widget opens: `popup` (default, centered) or `sheet` (from the bottom) |
 | `modalWidget` | Widget | no | Widget opened on click. Defaults to `widget:navimow_mower_card` |
 
 ## Choosing another extended widget
 
 `modalWidget` accepts any widget. It is opened in a popup and receives four
 props: `activityItem`, `controlItem`, `batteryItem` and `modelItem`, each set
-to the Item you configured here. A custom widget must therefore declare props
+to the Item you configured here, plus `maxWidth` (`32rem`, so the card fills
+the popup; ignored by widgets without that prop). A custom widget must therefore declare props
 with those names to use them.
 
 ## Model image

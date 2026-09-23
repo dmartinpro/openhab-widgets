@@ -32,12 +32,14 @@ references.
 | `controlItem` | TEXT (item) | yes | String item, `control` channel |
 | `batteryItem` | TEXT (item) | yes | Number item, `battery-level` channel |
 | `modelItem` | TEXT (item) | yes | String item, `model` channel |
+| `maxWidth` | TEXT | no | CSS max-width of the card, default `20rem`; the compact widget sets `32rem` so the card fills its popup |
 | `title` | TEXT | no | Overrides header text; defaults to `"Navimow " + modelItem state`, or `"Mower"` if unavailable |
 
 ## Layout notes
 
 - Root is a `div` card (flex column, inline styles only, no `f7-block`), per
-  house convention.
+  house convention. `max-width: 20rem; margin: 0 auto` keeps it centered when
+  its container is wider (e.g. when opened in a popup from the compact widget).
 - Header row: title (left) + activity icon/label chip (right), colored per
   `activity` via a static `vars.activityMeta` lookup table (icon, color,
   label per one of the 8 known activity values, with an `unknown` fallback

@@ -26,6 +26,11 @@ props:
     context: item
     description: Read-only String item linked to the mower's model channel (navimow:mower:...:model), e.g. "X430" or "i110". Used for the card title and to pick a per-category image (first 2 characters, e.g. "X4", "i1").
     required: true
+  - name: maxWidth
+    label: Max Width (optional)
+    type: TEXT
+    description: CSS max-width of the card. Defaults to 20rem. Set by the compact widget to fill its popup.
+    required: false
   - name: title
     label: Title (optional)
     type: TEXT
@@ -38,7 +43,8 @@ config:
     flex-direction: column
     gap: 0.75rem
     width: 100%
-    max-width: 20rem
+    max-width: '=props.maxWidth || ''20rem'''
+    margin: 0 auto
     box-sizing: border-box
     padding: 0.9rem
     border-radius: 0.75rem
@@ -131,6 +137,7 @@ slots:
           style:
             display: flex
             align-items: center
+            justify-content: center
             gap: 0.75rem
         slots:
           default:

@@ -56,6 +56,7 @@ makes openHAB multiply the value by 100 (e.g. 85% shown as 8500%).
 | `controlItem` | Item (String) | yes | Linked to the `control` channel |
 | `batteryItem` | Item (Number) | yes | Linked to the `battery-level` channel |
 | `modelItem` | Item (String) | yes | Linked to the `model` channel |
+| `maxWidth` | Text | no | CSS max-width of the card. Defaults to `20rem` |
 | `title` | Text | no | Overrides the card header text. Defaults to `"Navimow " + <model>` (e.g. "Navimow X430"), or `"Mower"` if the model isn't available yet |
 
 ## Model image
