@@ -1,0 +1,26 @@
+uid: openweathermap_card_test
+tags: []
+props:
+  parameters: []
+  parameterGroups: []
+component: oh-layout-page
+config:
+  label: OpenWeatherMap card (test)
+  layoutType: responsive
+slots:
+  default:
+  - component: oh-block
+    config: {}
+    slots:
+      default:
+      - component: oh-grid-row
+        config: {}
+        slots:
+          default:
+          - component: oh-grid-col
+            config: {}
+            slots:
+              default:
+              - component: widget:openweathermap_card
+                config:
+                  locale: de
