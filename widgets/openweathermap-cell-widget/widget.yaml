@@ -1,0 +1,112 @@
+uid: openweathermap_cell
+tags: []
+props:
+  parameters:
+  - name: prefix
+    label: Item prefix
+    type: TEXT
+    required: false
+    description: Prefix of the OWM_* items (default OWM). See the openweathermap-card-widget context.md for the item list.
+  - name: unit
+    label: Temperature unit
+    type: TEXT
+    required: false
+    description: C (default) or F. Items are assumed to be in °C.
+  - name: locale
+    label: Language
+    type: TEXT
+    required: false
+    description: fr (default), en or de. Passed to the card popup.
+component: div
+config:
+  style:
+    height: 120px
+    margin: 10px 5px
+    box-sizing: border-box
+    overflow: hidden
+    user-select: none
+    background: 'var(--f7-card-bg-color, #ffffff)'
+    border-radius: var(--f7-card-border-radius, 8px)
+    box-shadow: '0px 5px 10px #00000026'
+slots:
+  default:
+  - component: oh-context
+    config:
+      variables:
+        p: =props.prefix || 'OWM'
+        f: =(props.unit || 'C') === 'F'
+    slots:
+      default:
+      - component: oh-link
+        config:
+          style:
+            display: flex
+            flex-direction: column
+            justify-content: space-between
+            align-items: stretch
+            width: 100%
+            height: 100%
+            box-sizing: border-box
+            padding: 0.5rem 0.75rem
+            opacity: '1'
+            text-decoration: none
+            color: inherit
+          action: popup
+          actionModal: widget:openweathermap_card
+          actionModalConfig:
+            prefix: =vars.p
+            unit: =props.unit
+            locale: =props.locale
+            maxWidth: 32rem
+        slots:
+          default:
+          - component: div
+            config:
+              style:
+                display: flex
+                align-items: center
+                gap: 0.5rem
+            slots:
+              default:
+              - component: oh-image
+                config:
+                  item: =vars.p + '_current_icon'
+                  style:
+                    width: 3rem
+                    height: 3rem
+                    object-fit: contain
+                    flex: 0 0 auto
+              - component: div
+                config:
+                  style:
+                    font-size: 2rem
+                    font-weight: '300'
+                    line-height: '1'
+                  content: '=((+items[vars.p + ''_current_temperature''].state.split('' '')[0]) !== (+items[vars.p + ''_current_temperature''].state.split('' '')[0]) ? ''–'' : Math.round(vars.f ? (+items[vars.p + ''_current_temperature''].state.split('' '')[0]) * 9 / 5 + 32 : (+items[vars.p + ''_current_temperature''].state.split('' '')[0])) + ''°'')'
+          - component: div
+            config:
+              style:
+                font-size: 0.75rem
+                opacity: '0.7'
+                white-space: nowrap
+                overflow: hidden
+                text-overflow: ellipsis
+              content: '=(items[vars.p + ''_current_condition''] && items[vars.p + ''_current_condition''].state !== ''NULL'' ? items[vars.p + ''_current_condition''].state : ''–'')'
+          - component: div
+            config:
+              style:
+                display: flex
+                justify-content: space-between
+                font-size: 0.8rem
+            slots:
+              default:
+              - component: div
+                config:
+                  style:
+                    opacity: '0.85'
+                  content: '=`${((+items[vars.p + ''_forecastToday_min_temperature''].state.split('' '')[0]) !== (+items[vars.p + ''_forecastToday_min_temperature''].state.split('' '')[0]) ? ''–'' : Math.round(vars.f ? (+items[vars.p + ''_forecastToday_min_temperature''].state.split('' '')[0]) * 9 / 5 + 32 : (+items[vars.p + ''_forecastToday_min_temperature''].state.split('' '')[0])) + ''°'')} / ${((+items[vars.p + ''_forecastToday_max_temperature''].state.split('' '')[0]) !== (+items[vars.p + ''_forecastToday_max_temperature''].state.split('' '')[0]) ? ''–'' : Math.round(vars.f ? (+items[vars.p + ''_forecastToday_max_temperature''].state.split('' '')[0]) * 9 / 5 + 32 : (+items[vars.p + ''_forecastToday_max_temperature''].state.split('' '')[0])) + ''°'')}`'
+              - component: div
+                config:
+                  style:
+                    color: '#4a90e2'
+                  content: '=((+items[vars.p + ''_forecastToday_precip_probability''].state.split('' '')[0]) !== (+items[vars.p + ''_forecastToday_precip_probability''].state.split('' '')[0]) ? ''–'' : Math.round((+items[vars.p + ''_forecastToday_precip_probability''].state.split('' '')[0]) * (items[vars.p + ''_forecastToday_precip_probability''].state.indexOf(''%'') >= 0 ? 1 : 100)) + '' %'')'

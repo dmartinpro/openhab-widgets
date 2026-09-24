@@ -1,0 +1,21 @@
+uid: openweathermap_cell_test
+tags: []
+props:
+  parameters: []
+  parameterGroups: []
+component: oh-layout-page
+config:
+  label: OpenWeatherMap cell (test)
+  layoutType: responsive
+slots:
+  default:
+  - component: oh-block
+    config: {}
+    slots:
+      default:
+      - component: oh-grid-cells
+        config: {}
+        slots:
+          default:
+          - component: widget:openweathermap_cell
+            config: {}
