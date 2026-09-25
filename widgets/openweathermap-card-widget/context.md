@@ -43,12 +43,14 @@ fraction 0..1 (widget converts to %), `time-stamp` ISO string.
   the evaluator's `Date`/`Intl` support is unverified, so they are avoided.
 - Icons use `oh-image` with the Image item (`items[x].state` in expressions is
   only a text description of the image, not a usable `src`).
-- Icons fall back to a gray cloud placeholder (inline SVG) when the Image item
-  has no data (`NULL`, `UNDEF`) or does not exist (Main UI gives it state
-  `'-'`), so no broken image is shown. The `oh-image` stays mounted (it only
-  loads its image at page activation, so a late `visible` flip leaves it
-  empty) and is hidden with `visibility`; the placeholder is overlaid in a CSS
-  grid stack and toggled with `visible`.
+- Icons: `oh-image` sets `src="NULL"` (a relative URL, so a 404 broken image)
+  whenever the Image item is NULL/UNDEF or reloading (e.g. after the popup
+  closes). Each icon is a grid stack (`.owm-icon`) of the `oh-image` and a gray
+  cloud `img` placeholder, and an inline `<style>` (a plain `style` component
+  with `content`) shows the placeholder exactly when the `oh-image` `src` is
+  not a `data:` URI (`:not([src^='data:'])`), so it tracks the real `src`.
+  Tried and rejected: `visible`/expressions on item state (out of sync with the
+  fetch, and `oh-image` only loads at page activation), `alt=""` (no effect).
 - Evaluator has no `isNaN`/`parseFloat`/`parseInt`: numbers via unary `+`,
   NaN check via `v !== v`. `oh-context` variables do not refresh with item
   state, so date/number expressions are inlined. `oh-repeater` takes `in`

@@ -29,7 +29,7 @@ Flex row: icon (6rem, twice the first version) on the left; right column
 condition (one line, ellipsis), min / max, then a bottom row with the UV
 index (colored by WHO level: <3 green, <6 yellow, <8 orange, <11 red, else
 violet) on the left and a blue drop icon (`f7:drop_fill`) + rain probability on
-the right. Icon: same placeholder mechanism as the card widget (cloud when the Image item has no data).
+the right. Icon: same CSS-driven placeholder as the card widget (see its context.md).
 Same evaluator constraints as the
 card widget (no `parseFloat`/`isNaN`, `oh-image` for icons). Put it in an
 `oh-grid-cells` block.

@@ -101,6 +101,8 @@ slots:
           default:
           - component: div
             config:
+              class:
+              - owm-icon
               style:
                 width: 5rem
                 height: 5rem
@@ -108,24 +110,23 @@ slots:
                 display: grid
             slots:
               default:
+              - component: style
+                config:
+                  content: .owm-icon img.oh-image:not([src^='data:']){visibility:hidden} .owm-icon img.owm-ph{visibility:hidden} .owm-icon img.oh-image:not([src^='data:'])+img.owm-ph{visibility:visible}
               - component: oh-image
                 config:
                   item: =vars.p + '_current_icon'
-                  style:
+                  style: &id001
                     width: 100%
                     height: 100%
                     object-fit: contain
                     grid-area: 1 / 1
-                    visibility: '=((items[vars.p + ''_current_icon''] && items[vars.p + ''_current_icon''].state && items[vars.p + ''_current_icon''].state !== ''NULL'' && items[vars.p + ''_current_icon''].state !== ''UNDEF'' && items[vars.p + ''_current_icon''].state !== ''-'') ? true : false) ? ''visible'' : ''hidden'''
               - component: img
                 config:
                   src: data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M20 46a10 10 0 0 1 0-20 14 14 0 0 1 27 4 8 8 0 0 1 0 16z' fill='none' stroke='%23888' stroke-width='3' stroke-linejoin='round' opacity='.5'/></svg>
-                  visible: '=((items[vars.p + ''_current_icon''] && items[vars.p + ''_current_icon''].state && items[vars.p + ''_current_icon''].state !== ''NULL'' && items[vars.p + ''_current_icon''].state !== ''UNDEF'' && items[vars.p + ''_current_icon''].state !== ''-'') ? true : false) ? false : true'
-                  style:
-                    width: 100%
-                    height: 100%
-                    object-fit: contain
-                    grid-area: 1 / 1
+                  class:
+                  - owm-ph
+                  style: *id001
           - component: div
             config:
               style:
@@ -224,6 +225,8 @@ slots:
                           content: =items[vars.p + '_' + loop.g + '_time_stamp'].state.slice(0, 10).slice(8, 10) + '/' + items[vars.p + '_' + loop.g + '_time_stamp'].state.slice(0, 10).slice(5, 7)
                       - component: div
                         config:
+                          class:
+                          - owm-icon
                           style:
                             width: 2.2rem
                             height: 2.2rem
@@ -231,24 +234,23 @@ slots:
                             display: grid
                         slots:
                           default:
+                          - component: style
+                            config:
+                              content: .owm-icon img.oh-image:not([src^='data:']){visibility:hidden} .owm-icon img.owm-ph{visibility:hidden} .owm-icon img.oh-image:not([src^='data:'])+img.owm-ph{visibility:visible}
                           - component: oh-image
                             config:
                               item: =vars.d + 'icon'
-                              style:
+                              style: &id002
                                 width: 100%
                                 height: 100%
                                 object-fit: contain
                                 grid-area: 1 / 1
-                                visibility: '=((items[vars.d + ''icon''] && items[vars.d + ''icon''].state && items[vars.d + ''icon''].state !== ''NULL'' && items[vars.d + ''icon''].state !== ''UNDEF'' && items[vars.d + ''icon''].state !== ''-'') ? true : false) ? ''visible'' : ''hidden'''
                           - component: img
                             config:
                               src: data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M20 46a10 10 0 0 1 0-20 14 14 0 0 1 27 4 8 8 0 0 1 0 16z' fill='none' stroke='%23888' stroke-width='3' stroke-linejoin='round' opacity='.5'/></svg>
-                              visible: '=((items[vars.d + ''icon''] && items[vars.d + ''icon''].state && items[vars.d + ''icon''].state !== ''NULL'' && items[vars.d + ''icon''].state !== ''UNDEF'' && items[vars.d + ''icon''].state !== ''-'') ? true : false) ? false : true'
-                              style:
-                                width: 100%
-                                height: 100%
-                                object-fit: contain
-                                grid-area: 1 / 1
+                              class:
+                              - owm-ph
+                              style: *id002
                       - component: div
                         config:
                           style:
