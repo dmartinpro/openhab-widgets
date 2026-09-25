@@ -43,6 +43,10 @@ fraction 0..1 (widget converts to %), `time-stamp` ISO string.
   the evaluator's `Date`/`Intl` support is unverified, so they are avoided.
 - Icons use `oh-image` with the Image item (`items[x].state` in expressions is
   only a text description of the image, not a usable `src`).
+- Icons fall back to a gray cloud placeholder (inline SVG) when the Image item
+  has no data (`NULL`, `UNDEF`) or does not exist (Main UI gives it state
+  `'-'`), so no broken image is shown. The `oh-image` and the placeholder are
+  swapped with `visible` expressions inside a fixed-size `div`.
 - Evaluator has no `isNaN`/`parseFloat`/`parseInt`: numbers via unary `+`,
   NaN check via `v !== v`. `oh-context` variables do not refresh with item
   state, so date/number expressions are inlined. `oh-repeater` takes `in`
