@@ -16,7 +16,7 @@ All Number items must be quantity types; temperatures are read as °C.
 
 - `OWM_current_`: `condition`, `icon` (Image), `temperature`, `apparent_temperature`, `humidity`, `wind_speed`, `rain`
 - `OWM_forecastToday_`: `min_temperature`, `max_temperature`, `precip_probability`, `rain`, `snow`, `uvindex`, `humidity`, `wind_speed`, `sunrise`, `sunset`, `time_stamp`, `icon`, `condition`
-- `OWM_forecastTomorrow_`, `OWM_forecastDay2_`, `OWM_forecastDay3_`, `OWM_forecastDay4_`: `time_stamp`, `condition`, `icon`, `min_temperature`, `max_temperature`, `precip_probability`, `rain`, `snow`
+- `OWM_forecastTomorrow_`, `OWM_forecastDay2_`, `OWM_forecastDay3_`, `OWM_forecastDay4_`: `time_stamp`, `condition`, `icon`, `min_temperature`, `max_temperature`, `precip_probability`, `rain`, `snow`, `uvindex`
 
 Source: `openweathermap:onecall:*` Thing (One Call 3.0), groups `forecastToday`
 … `forecastDay4`. The `current` items are linked to the `weather-and-forecast`
@@ -54,6 +54,7 @@ fraction 0..1 (widget converts to %), `time-stamp` ISO string.
   state, so date/number expressions are inlined. `oh-repeater` takes `in`
   (not `list`).
 - Today card has an extras row: UV, humidity, sunrise, sunset (labels per locale).
+- Each following day shows its UV index (colored by level), hidden when the item has no data.
 - Widgets must be placed in `oh-grid-row`/`oh-grid-col` or `oh-grid-cells`
   on a page; directly in an `oh-block` they do not resolve.
 

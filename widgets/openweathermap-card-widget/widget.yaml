@@ -266,3 +266,11 @@ slots:
                             font-size: 0.8rem
                             color: '#4a90e2'
                           content: '=((+items[vars.d + ''rain''].state.split('' '')[0]) !== (+items[vars.d + ''rain''].state.split('' '')[0]) ? ''–'' : (Math.round((+items[vars.d + ''rain''].state.split('' '')[0]) * (items[vars.d + ''rain''].state.slice(-3) === '' mm'' ? 1 : 1000) * 10) / 10) + '' mm'')'
+                      - component: div
+                        config:
+                          style:
+                            font-size: 0.75rem
+                            font-weight: '600'
+                            color: '=(+items[vars.d + ''uvindex''].state) < 3 ? ''#43a047'' : (+items[vars.d + ''uvindex''].state) < 6 ? ''#fdd835'' : (+items[vars.d + ''uvindex''].state) < 8 ? ''#fb8c00'' : (+items[vars.d + ''uvindex''].state) < 11 ? ''#e53935'' : ''#8e24aa'''
+                          content: ='UV ' + Math.round((+items[vars.d + 'uvindex'].state) * 10) / 10
+                          visible: '=(items[vars.d + ''uvindex''] && items[vars.d + ''uvindex''].state && items[vars.d + ''uvindex''].state !== ''NULL'' && items[vars.d + ''uvindex''].state !== ''UNDEF'' && items[vars.d + ''uvindex''].state !== ''-'') ? true : false'
