@@ -43,11 +43,11 @@ slots:
             display: flex
             flex-direction: row
             align-items: center
-            gap: 0.5rem
+            gap: 0.35rem
             width: 100%
             height: 100%
             box-sizing: border-box
-            padding: 0.5rem 0.75rem
+            padding: 0.5rem 0.6rem
             opacity: '1'
             text-decoration: none
             color: inherit
@@ -65,8 +65,8 @@ slots:
               class:
               - owm-icon
               style:
-                width: 6rem
-                height: 6rem
+                width: clamp(2.75rem, 36%, 6rem)
+                aspect-ratio: 1 / 1
                 flex: 0 0 auto
                 display: grid
             slots:
@@ -119,8 +119,11 @@ slots:
               - component: div
                 config:
                   style:
-                    font-size: 0.8rem
+                    font-size: 0.75rem
                     opacity: '0.85'
+                    white-space: nowrap
+                    overflow: hidden
+                    text-overflow: ellipsis
                   content: '=`${((+items[vars.p + ''_forecastToday_min_temperature''].state.split('' '')[0]) !== (+items[vars.p + ''_forecastToday_min_temperature''].state.split('' '')[0]) ? ''–'' : Math.round(vars.f ? (+items[vars.p + ''_forecastToday_min_temperature''].state.split('' '')[0]) * 9 / 5 + 32 : (+items[vars.p + ''_forecastToday_min_temperature''].state.split('' '')[0])) + ''°'')} / ${((+items[vars.p + ''_forecastToday_max_temperature''].state.split('' '')[0]) !== (+items[vars.p + ''_forecastToday_max_temperature''].state.split('' '')[0]) ? ''–'' : Math.round(vars.f ? (+items[vars.p + ''_forecastToday_max_temperature''].state.split('' '')[0]) * 9 / 5 + 32 : (+items[vars.p + ''_forecastToday_max_temperature''].state.split('' '')[0])) + ''°'')}`'
               - component: div
                 config:
@@ -128,7 +131,10 @@ slots:
                     display: flex
                     justify-content: space-between
                     align-items: center
-                    font-size: 0.8rem
+                    font-size: 0.75rem
+                    flex-wrap: nowrap
+                    column-gap: 0.15rem
+                    white-space: nowrap
                 slots:
                   default:
                   - component: div
@@ -142,15 +148,15 @@ slots:
                       style:
                         display: flex
                         align-items: center
-                        gap: 0.15rem
+                        gap: 0.1rem
                         color: '#4a90e2'
                     slots:
                       default:
                       - component: oh-icon
                         config:
                           icon: f7:drop_fill
-                          size: '12'
+                          size: '11'
                       - component: div
                         config:
                           style: {}
-                          content: '=((+items[vars.p + ''_forecastToday_precip_probability''].state.split('' '')[0]) !== (+items[vars.p + ''_forecastToday_precip_probability''].state.split('' '')[0]) ? ''–'' : Math.round((+items[vars.p + ''_forecastToday_precip_probability''].state.split('' '')[0]) * (items[vars.p + ''_forecastToday_precip_probability''].state.indexOf(''%'') >= 0 ? 1 : 100)) + '' %'')'
+                          content: '=((+items[vars.p + ''_forecastToday_precip_probability''].state.split('' '')[0]) !== (+items[vars.p + ''_forecastToday_precip_probability''].state.split('' '')[0]) ? ''–'' : Math.round((+items[vars.p + ''_forecastToday_precip_probability''].state.split('' '')[0]) * (items[vars.p + ''_forecastToday_precip_probability''].state.indexOf(''%'') >= 0 ? 1 : 100)) + ''%'')'

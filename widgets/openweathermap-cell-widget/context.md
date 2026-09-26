@@ -24,12 +24,16 @@ the prefix:
 
 ## Layout notes
 
-Flex row: icon (6rem, twice the first version) on the left; right column
+Flex row, sized for phones (cell about 165 px wide, 2 per row) as well as tablets:
+the icon is fluid, `clamp(2.75rem, 36%, 6rem)` of the cell width with
+`aspect-ratio: 1`, so the text column keeps about 85 px. The right column
 (`flex: 1 1 0; min-width: 0`) stacks current temperature (2rem, light),
-condition (one line, ellipsis), min / max, then a bottom row with the UV
-index (colored by WHO level: <3 green, <6 yellow, <8 orange, <11 red, else
-violet) on the left and a blue drop icon (`f7:drop_fill`) + rain probability on
-the right. Icon: same CSS-driven placeholder as the card widget (see its context.md).
+condition (one line, ellipsis), min / max (0.75rem, one line), then a
+non-wrapping bottom row: UV index (colored by WHO level: <3 green, <6 yellow,
+<8 orange, <11 red, else violet) on the left, blue drop icon (`f7:drop_fill`,
+size 11) + rain probability (`0%`, no space) on the right. Link padding is
+`0.5rem 0.6rem` and gap `0.35rem`; every pixel counts on a phone.
+Icon: same CSS-driven placeholder as the card widget (see its context.md).
 Same evaluator constraints as the
 card widget (no `parseFloat`/`isNaN`, `oh-image` for icons). Put it in an
 `oh-grid-cells` block.
