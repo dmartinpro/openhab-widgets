@@ -56,7 +56,7 @@ fraction 0..1 (widget converts to %), `time-stamp` ISO string.
   state, so date/number expressions are inlined. `oh-repeater` takes `in`
   (not `list`).
 - Today card has an extras row: UV, humidity, sunrise, sunset (labels per locale).
-- Each following day shows its UV index (colored by level), hidden when the item has no data.
+- Each following day: icon with its UV index on the right (colored by level, hidden when the item has no data), then max / min, then "rain probability / rain mm" on one line.
 - Widgets must be placed in `oh-grid-row`/`oh-grid-col` or `oh-grid-cells`
   on a page; directly in an `oh-block` they do not resolve.
 
