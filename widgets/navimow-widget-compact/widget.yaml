@@ -26,6 +26,11 @@ props:
     context: item
     description: String item linked to the mower's control channel. Not used by this card itself; passed on to the extended widget opened on click.
     required: true
+  - name: title
+    label: Title
+    type: TEXT
+    description: Overrides the top-left name. Defaults to "Navimow " + modelItem state, or "Mower" if unavailable.
+    required: false
   - name: modalType
     label: Open As
     type: TEXT
@@ -84,12 +89,14 @@ slots:
         config:
           style:
             display: flex
-            align-items: center
-            gap: 0.5rem
+            flex-direction: column
+            justify-content: space-between
+            align-items: stretch
             width: 100%
             height: 100%
             box-sizing: border-box
-            padding: 0.5rem
+            padding: 0.5rem 0.6rem
+            gap: 0.3rem
             opacity: '1'
             text-decoration: none
             color: inherit
@@ -103,33 +110,34 @@ slots:
             maxWidth: 32rem
         slots:
           default:
-          - component: img
-            config:
-              src: '=vars.modelImages[(items[props.modelItem] && items[props.modelItem].state || '''').slice(0,2)] || vars.defaultImage'
-              style:
-                flex: 1 1 0
-                min-width: 0
-                max-width: 4.5rem
-                height: auto
-                object-fit: contain
-                display: block
           - component: div
             config:
               style:
-                flex: 1 1 0
-                min-width: 0
                 display: flex
-                flex-direction: column
-                justify-content: center
-                gap: 0.5rem
+                align-items: center
+                justify-content: space-between
+                gap: 0.4rem
+                flex: none
             slots:
               default:
               - component: div
                 config:
+                  content: '=props.title || (items[props.modelItem] && items[props.modelItem].state ? ''Navimow '' + items[props.modelItem].state : ''Mower'')'
                   style:
+                    flex: 1 1 0
+                    min-width: 0
+                    overflow: hidden
+                    text-overflow: ellipsis
+                    white-space: nowrap
+                    font-size: 0.8rem
+                    font-weight: '600'
+              - component: div
+                config:
+                  style:
+                    flex: none
                     display: flex
                     align-items: center
-                    gap: 0.25rem
+                    gap: 0.2rem
                 slots:
                   default:
                   - component: oh-icon
@@ -137,45 +145,63 @@ slots:
                       icon: '=(vars.activityMeta[items[props.activityItem] && items[props.activityItem].state] || vars.activityMeta.unknown).icon'
                       style:
                         flex: none
-                        font-size: 1rem
+                        font-size: 0.9rem
                         color: '=(vars.activityMeta[items[props.activityItem] && items[props.activityItem].state] || vars.activityMeta.unknown).color'
                   - component: div
                     config:
                       content: '=(vars.activityMeta[items[props.activityItem] && items[props.activityItem].state] || vars.activityMeta.unknown).label'
                       style:
-                        min-width: 0
-                        overflow: hidden
-                        text-overflow: ellipsis
                         white-space: nowrap
-                        font-size: 0.8rem
+                        font-size: 0.7rem
                         font-weight: '600'
                         color: '=(vars.activityMeta[items[props.activityItem] && items[props.activityItem].state] || vars.activityMeta.unknown).color'
+          - component: div
+            config:
+              style:
+                flex: 1 1 auto
+                min-height: 0
+                display: flex
+                align-items: center
+                justify-content: center
+                overflow: hidden
+            slots:
+              default:
+              - component: img
+                config:
+                  src: '=vars.modelImages[(items[props.modelItem] && items[props.modelItem].state || '''').slice(0,2)] || vars.defaultImage'
+                  style:
+                    max-width: 100%
+                    max-height: 100%
+                    width: auto
+                    height: auto
+                    object-fit: contain
+                    display: block
+          - component: div
+            config:
+              style:
+                flex: none
+                display: grid
+                height: 1.4rem
+                border-radius: 0.7rem
+                background: '#757575'
+                overflow: hidden
+            slots:
+              default:
               - component: div
                 config:
                   style:
-                    display: grid
-                    height: 1.4rem
-                    border-radius: 0.7rem
-                    background: '#757575'
-                    overflow: hidden
-                slots:
-                  default:
-                  - component: div
-                    config:
-                      style:
-                        grid-area: 1 / 1
-                        width: '=Math.max(0, Math.min(100, Number(items[props.batteryItem] ? items[props.batteryItem].state : 0))) + ''%'''
-                        background: '=Number(items[props.batteryItem] ? items[props.batteryItem].state : 0) <= 20 ? ''#e53935'' : (Number(items[props.batteryItem] ? items[props.batteryItem].state : 0) <= 50 ? ''#fb8c00'' : ''#43a047'')'
-                        transition: width 0.4s ease
-                  - component: div
-                    config:
-                      content: '=(items[props.batteryItem] ? items[props.batteryItem].state : ''-'') + '' %'''
-                      style:
-                        grid-area: 1 / 1
-                        justify-self: end
-                        align-self: center
-                        padding-right: 0.4rem
-                        font-size: 0.75rem
-                        font-weight: '600'
-                        color: '#ffffff'
-                        text-shadow: 0 1px 2px rgba(0,0,0,0.6)
+                    grid-area: 1 / 1
+                    width: '=Math.max(0, Math.min(100, Number(items[props.batteryItem] ? items[props.batteryItem].state : 0))) + ''%'''
+                    background: '=Number(items[props.batteryItem] ? items[props.batteryItem].state : 0) <= 20 ? ''#e53935'' : (Number(items[props.batteryItem] ? items[props.batteryItem].state : 0) <= 50 ? ''#fb8c00'' : ''#43a047'')'
+                    transition: width 0.4s ease
+              - component: div
+                config:
+                  content: '=(items[props.batteryItem] ? items[props.batteryItem].state : ''-'') + '' %'''
+                  style:
+                    grid-area: 1 / 1
+                    justify-self: center
+                    align-self: center
+                    font-size: 0.75rem
+                    font-weight: '600'
+                    color: '#ffffff'
+                    text-shadow: 0 1px 2px rgba(0,0,0,0.6)
