@@ -92,6 +92,7 @@ optional and purely cosmetic.
 |---|---|---|---|
 | `activateGroupsItem` | Item (String) | yes | Linked to `activate-groups` |
 | `disableGroupsItem` | Item (String) | yes | Linked to `disable-groups` |
+| `allowDisarm` ("Disarm alarm") | Boolean | no (default `false`) | Security switch. When `false`, the widget never sends a disarm command: the central button is greyed out whenever its action would be a disarm, so a wall touchscreen can't be used to disarm the alarm. Arming always works. Set to `true` to allow disarming |
 
 ### Zone 1 / Zone 2 / Zone 3 / Zone 4
 
@@ -137,6 +138,13 @@ zone 3 `f7:building_2_fill`, zone 4 `f7:car_fill`.
 | (any) | Command just sent, not yet confirmed | Orange/"busy" — tap suppressed to avoid a duplicate send |
 
 Selection clears automatically after a tap that actually sends a command.
+
+With `allowDisarm` = `false` (the default), every "Red — tap disarms" row
+above becomes grey/disabled instead. In particular, with no selection and
+at least one zone already armed, the button is disabled: select the
+still-disarmed zones to arm them. This is a UI-level guard only — it does
+not stop disarming from other UIs, the app, or by sending a command to
+`disableGroupsItem` directly.
 
 ## Known limitations
 

@@ -1086,3 +1086,36 @@ before and during hover. No click involved at any point.
   (page ID `widget`) from the first rewrite was *not* touched this round —
   it no longer exists on the instance (already removed, presumably by the
   user, between sessions).
+
+### Sixth follow-up (2026-10-01): `allowDisarm` security switch
+
+New `BOOLEAN` parameter `allowDisarm` (label "Disarm alarm", default
+`false`, group "Batch Control") so a wall touchscreen can't be used to
+disarm the alarm. When it is `false` the widget never sends to
+`disableGroupsItem`.
+
+**Implementation:** in the duplicated `PROPOSAL` expression (17 copies),
+both `'deactivate'` results became `(props.allowDisarm === true ||
+props.allowDisarm === 'true' ? 'deactivate' : 'disabled')`. A disarm is therefore treated exactly like the existing
+`disabled` state everywhere at once: `action: 'none'`, grey tint,
+`cursor: not-allowed`, selection not cleared. No new code path to keep in
+sync. An unset/undefined prop is falsy, so the safe behavior also applies
+to existing instances that never set it.
+
+**Side effect (accepted):** with nothing selected and some zone already
+armed, `PROPOSAL` was `deactivate`, so the button is now disabled; the
+user must select the disarmed zones to arm them.
+
+**Limit:** UI-level only. Other UIs, the Diagral app and direct commands
+to `disableGroupsItem` are unaffected.
+
+**Why the strict `=== true || === 'true'` check:** the server stores a
+`BOOLEAN` parameter's `default` as the *string* `'false'`, which a bare
+`props.allowDisarm` test treats as truthy, i.e. disarm would have been
+allowed by default. Only boolean `true` / string `'true'` enable disarming.
+
+**Verified:** YAML parses, 24 expressions balanced, and the `action`
+expression was evaluated in node with `allowDisarm` = undefined, `false`,
+`'false'`, `null`, `0` (no disarm command) and `true`, `'true'` (disarm
+command). **Deployed 2026-10-01** to the live widget; its 24 expressions
+match the local file exactly. Not click-tested (real alarm).
