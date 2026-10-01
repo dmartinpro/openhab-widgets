@@ -219,6 +219,15 @@ openHAB instance. Apply them proactively, not just when a bug matches.
   chunks referenced by other chunks) and grep them; this is faster and more
   reliable than guessing.
 
+- The server stores a `BOOLEAN` parameter's `default` as the string
+  `'false'`, so `props.flag` is truthy by default. Test `props.flag === true
+  || props.flag === 'true'`, especially for security switches.
+- When the openHAB instance is served over https (remote), the page cannot
+  `fetch()` the local `http://localhost` helper server (mixed content/private
+  network blocked). Patch the live widget JSON inside the browser instead:
+  GET it, apply the same string replacement as the local edit, PUT it back,
+  then compare all `=` expressions with the local file.
+
 ### Modals and widget pickers
 
 - `oh-link` with `action: popup | popover | sheet` needs `actionModal:
