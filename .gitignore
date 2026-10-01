@@ -1,1 +1,4 @@
 .DS_Store
+
+# real values for anonymized pages (see sitemaps/render.py)
+*.values.yaml
