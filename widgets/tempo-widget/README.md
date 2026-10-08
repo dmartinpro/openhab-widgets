@@ -5,10 +5,10 @@ contract: today's color, tomorrow's color, and when they were last updated.
 
 ## What it does
 
-- Shows two glossy 3D "control light" circles side by side, labeled
-  **Today** and **Tomorrow** (configurable), lit in the Tempo color of that day: **blue**,
-  **white** or **red**.
-- Shows an unlit grey circle with **N/A** when the item holds anything else — the
+- Shows two flat rounded tiles side by side, labeled **Today** and
+  **Tomorrow** (configurable), filled with the Tempo color of that day:
+  **blue**, **white** or **red**. The color name is written on the tile too.
+- Shows a grey tile reading **N/A** when the item holds anything else — the
   error value, `NULL`, `UNDEF`, or an item that isn't bound.
 - Shows the **last update time** on a single line underneath
   (`YYYY-MM-DD HH:mm`).
@@ -28,7 +28,7 @@ A Tempo "day" runs from 06:00 to 06:00. The color of the next day is
 announced the day before.
 
 Knowing tomorrow's color in advance is the whole point of the contract, hence
-the two circles: they tell you when to shift consumption (heating, hot water,
+the two tiles: they tell you when to shift consumption (heating, hot water,
 EV charging, laundry, ...) away from white and especially red days.
 
 ## Prerequisites
@@ -58,7 +58,8 @@ If your source uses another spelling (`Blue`, `bleu`, ...), map it to
 1. In Main UI, go to **Developer Tools → Widgets → +** and paste in the
    contents of [`widget.yaml`](widget.yaml). Save.
 2. Add the widget to a page and set its three Item parameters to the Items
-   above. The two labels are optional (e.g. `Aujourd'hui` / `Demain`).
+   above. The labels are optional (e.g. `Aujourd'hui` / `Demain`, and `Bleu` / `Blanc` /
+   `Rouge` for the colors).
 
 ## Config parameters
 
@@ -67,25 +68,31 @@ If your source uses another spelling (`Blue`, `bleu`, ...), map it to
 | `todayItem` | Item (String) | yes | Color for the current day |
 | `tomorrowItem` | Item (String) | yes | Color for the next day |
 | `timestampItem` | Item (DateTime) | yes | Last successful update |
-| `todayLabel` | Text | no | Label under the left circle. Defaults to `Today` |
-| `tomorrowLabel` | Text | no | Label under the right circle. Defaults to `Tomorrow` |
+| `todayLabel` | Text | no | Label on the left tile. Defaults to `Today` |
+| `tomorrowLabel` | Text | no | Label on the right tile. Defaults to `Tomorrow` |
+| `blueLabel` | Text | no | Text on a `BLUE` tile. Defaults to `Blue` |
+| `whiteLabel` | Text | no | Text on a `WHITE` tile. Defaults to `White` |
+| `redLabel` | Text | no | Text on a `RED` tile. Defaults to `Red` |
+| `naLabel` | Text | no | Text on a grey tile (any other state). Defaults to `N/A` |
 
 ## Colors
 
-| State | Circle |
+| State | Tile |
 |---|---|
-| `BLUE` | Blue, with a soft blue glow |
-| `WHITE` | White (the grey rim keeps it visible on a light card) |
-| `RED` | Red, with a soft red glow |
-| anything else | Grey, with "N/A" |
+| `BLUE` | Blue, white text "Blue" |
+| `WHITE` | Off-white with a thin grey outline (visible on light cards), dark text "White" |
+| `RED` | Red, white text "Red" |
+| anything else | Grey, "N/A" |
 
-The colors, gradients and glow are set in the `tempo` variable at the top of
-[`widget.yaml`](widget.yaml); edit them there if you want a different shade.
+The printed names can be translated per widget instance with the four
+`*Label` parameters (e.g. `Bleu` / `Blanc` / `Rouge` / `N/A`); left empty they
+fall back to the English names. The shades themselves are set in the `tempo`
+variable at the top of [`widget.yaml`](widget.yaml).
 
 ## Known limitations
 
 - The timestamp is read straight from the Item's ISO state, so it shows the
   time in the offset openHAB reports (the server's), not converted to the
   browser's timezone.
-- No indication of *why* a circle is N/A — an error value and a missing
+- No indication of *why* a tile is N/A — an error value and a missing
   update look the same.

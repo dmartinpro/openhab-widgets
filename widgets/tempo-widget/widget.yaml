@@ -23,25 +23,42 @@ props:
   - name: todayLabel
     label: Today Label
     type: TEXT
-    description: Label under the left circle. Defaults to "Today" when empty.
+    description: Label on the left tile. Defaults to "Today" when empty.
     required: false
   - name: tomorrowLabel
     label: Tomorrow Label
     type: TEXT
-    description: Label under the right circle. Defaults to "Tomorrow" when empty.
+    description: Label on the right tile. Defaults to "Tomorrow" when empty.
+    required: false
+  - name: blueLabel
+    label: Blue Label
+    type: TEXT
+    description: Text shown on a tile when its state is BLUE. Defaults to "Blue" when empty.
+    required: false
+  - name: whiteLabel
+    label: White Label
+    type: TEXT
+    description: Text shown on a tile when its state is WHITE. Defaults to "White" when empty.
+    required: false
+  - name: redLabel
+    label: Red Label
+    type: TEXT
+    description: Text shown on a tile when its state is RED. Defaults to "Red" when empty.
+    required: false
+  - name: naLabel
+    label: N/A Label
+    type: TEXT
+    description: Text shown on a tile when its state is anything else. Defaults to "N/A" when empty.
     required: false
 component: div
 config:
   style:
     display: flex
     flex-direction: column
-    align-items: center
-    justify-content: center
-    gap: 0.4rem
     height: 120px
     margin: 10px 5px
     box-sizing: border-box
-    padding: 0.5rem
+    padding: 8px
     position: relative
     overflow: hidden
     user-select: none
@@ -56,30 +73,38 @@ slots:
       variables:
         tempo:
           BLUE:
-            bg: 'radial-gradient(ellipse at 50% 18%, rgba(255,255,255,0.75) 0, rgba(255,255,255,0) 42%), radial-gradient(circle at 35% 30%, #90caf9 0, #1e88e5 55%, #0d47a1 100%)'
-            shadow: 'inset -0.25rem -0.35rem 0.6rem rgba(0,0,0,0.3), inset 0.15rem 0.15rem 0.4rem rgba(255,255,255,0.35), 0 0.15rem 0.35rem rgba(0,0,0,0.3), 0 0 0.8rem rgba(30,136,229,0.65)'
-            text: ''
+            bg: '#1976d2'
+            fg: '#ffffff'
+            name: Blue
+            prop: blueLabel
+            ring: 'none'
           WHITE:
-            bg: 'radial-gradient(ellipse at 50% 18%, rgba(255,255,255,0.75) 0, rgba(255,255,255,0) 42%), radial-gradient(circle at 35% 30%, #ffffff 0, #f0f0f0 55%, #9e9e9e 100%)'
-            shadow: 'inset -0.25rem -0.35rem 0.6rem rgba(0,0,0,0.3), inset 0.15rem 0.15rem 0.4rem rgba(255,255,255,0.35), 0 0.15rem 0.35rem rgba(0,0,0,0.3), 0 0 0.8rem rgba(255,255,255,0.7)'
-            text: ''
+            bg: '#f5f5f5'
+            fg: '#1c1c1d'
+            name: White
+            prop: whiteLabel
+            ring: 'inset 0 0 0 1px rgba(128,128,128,0.4)'
           RED:
-            bg: 'radial-gradient(ellipse at 50% 18%, rgba(255,255,255,0.75) 0, rgba(255,255,255,0) 42%), radial-gradient(circle at 35% 30%, #ff8a80 0, #e53935 55%, #8e0000 100%)'
-            shadow: 'inset -0.25rem -0.35rem 0.6rem rgba(0,0,0,0.3), inset 0.15rem 0.15rem 0.4rem rgba(255,255,255,0.35), 0 0.15rem 0.35rem rgba(0,0,0,0.3), 0 0 0.8rem rgba(229,57,53,0.65)'
-            text: ''
+            bg: '#d32f2f'
+            fg: '#ffffff'
+            name: Red
+            prop: redLabel
+            ring: 'none'
           NA:
-            bg: 'radial-gradient(ellipse at 50% 18%, rgba(255,255,255,0.75) 0, rgba(255,255,255,0) 42%), radial-gradient(circle at 35% 30%, #e0e0e0 0, #9e9e9e 55%, #616161 100%)'
-            shadow: 'inset -0.25rem -0.35rem 0.6rem rgba(0,0,0,0.3), inset 0.15rem 0.15rem 0.4rem rgba(255,255,255,0.35), 0 0.15rem 0.35rem rgba(0,0,0,0.3)'
-            text: N/A
+            bg: '#5f6368'
+            fg: '#ffffff'
+            name: N/A
+            prop: naLabel
+            ring: 'none'
     slots:
       default:
       - component: div
         config:
           style:
             display: flex
-            justify-content: space-around
-            gap: 0.5rem
-            width: 100%
+            gap: 9px
+            flex: 1 1 0
+            min-height: 0
         slots:
           default:
           - component: div
@@ -87,76 +112,72 @@ slots:
               style:
                 flex: 1 1 0
                 min-width: 0
+                box-sizing: border-box
+                padding: 8px
+                border-radius: 10px
                 display: flex
                 flex-direction: column
-                align-items: center
-                gap: 0.25rem
+                justify-content: space-between
+                line-height: 1.2
+                background: '=(vars.tempo[items[props.todayItem] && items[props.todayItem].state] || vars.tempo.NA).bg'
+                color: '=(vars.tempo[items[props.todayItem] && items[props.todayItem].state] || vars.tempo.NA).fg'
+                box-shadow: '=(vars.tempo[items[props.todayItem] && items[props.todayItem].state] || vars.tempo.NA).ring'
             slots:
               default:
               - component: div
                 config:
-                  content: '=(vars.tempo[items[props.todayItem] && items[props.todayItem].state] || vars.tempo.NA).text'
-                  style:
-                    flex: none
-                    box-sizing: border-box
-                    width: 3.2rem
-                    height: 3.2rem
-                    border-radius: 50%
-                    border: 0.2rem solid rgba(110,110,110,0.55)
-                    background-clip: padding-box
-                    display: flex
-                    align-items: center
-                    justify-content: center
-                    font-weight: '600'
-                    color: '#ffffff'
-                    text-shadow: 0 1px 2px rgba(0,0,0,0.5)
-                    background: '=(vars.tempo[items[props.todayItem] && items[props.todayItem].state] || vars.tempo.NA).bg'
-                    box-shadow: '=(vars.tempo[items[props.todayItem] && items[props.todayItem].state] || vars.tempo.NA).shadow'
-              - component: div
-                config:
                   content: '=props.todayLabel || ''Today'''
                   style:
+                    font-size: 11px
+                    opacity: '0.8'
+                    white-space: nowrap
+                    overflow: hidden
+                    text-overflow: ellipsis
+              - component: div
+                config:
+                  content: '=props[(vars.tempo[items[props.todayItem] && items[props.todayItem].state] || vars.tempo.NA).prop] || (vars.tempo[items[props.todayItem] && items[props.todayItem].state] || vars.tempo.NA).name'
+                  style:
+                    font-size: 17px
                     font-weight: '600'
-                    font-size: 0.8rem
           - component: div
             config:
               style:
                 flex: 1 1 0
                 min-width: 0
+                box-sizing: border-box
+                padding: 8px
+                border-radius: 10px
                 display: flex
                 flex-direction: column
-                align-items: center
-                gap: 0.25rem
+                justify-content: space-between
+                line-height: 1.2
+                background: '=(vars.tempo[items[props.tomorrowItem] && items[props.tomorrowItem].state] || vars.tempo.NA).bg'
+                color: '=(vars.tempo[items[props.tomorrowItem] && items[props.tomorrowItem].state] || vars.tempo.NA).fg'
+                box-shadow: '=(vars.tempo[items[props.tomorrowItem] && items[props.tomorrowItem].state] || vars.tempo.NA).ring'
             slots:
               default:
               - component: div
                 config:
-                  content: '=(vars.tempo[items[props.tomorrowItem] && items[props.tomorrowItem].state] || vars.tempo.NA).text'
-                  style:
-                    flex: none
-                    box-sizing: border-box
-                    width: 3.2rem
-                    height: 3.2rem
-                    border-radius: 50%
-                    border: 0.2rem solid rgba(110,110,110,0.55)
-                    background-clip: padding-box
-                    display: flex
-                    align-items: center
-                    justify-content: center
-                    font-weight: '600'
-                    color: '#ffffff'
-                    text-shadow: 0 1px 2px rgba(0,0,0,0.5)
-                    background: '=(vars.tempo[items[props.tomorrowItem] && items[props.tomorrowItem].state] || vars.tempo.NA).bg'
-                    box-shadow: '=(vars.tempo[items[props.tomorrowItem] && items[props.tomorrowItem].state] || vars.tempo.NA).shadow'
-              - component: div
-                config:
                   content: '=props.tomorrowLabel || ''Tomorrow'''
                   style:
+                    font-size: 11px
+                    opacity: '0.8'
+                    white-space: nowrap
+                    overflow: hidden
+                    text-overflow: ellipsis
+              - component: div
+                config:
+                  content: '=props[(vars.tempo[items[props.tomorrowItem] && items[props.tomorrowItem].state] || vars.tempo.NA).prop] || (vars.tempo[items[props.tomorrowItem] && items[props.tomorrowItem].state] || vars.tempo.NA).name'
+                  style:
+                    font-size: 17px
                     font-weight: '600'
-                    font-size: 0.8rem
       - component: div
         config:
           content: '=(items[props.timestampItem] && items[props.timestampItem].state || '''').slice(10,11) === ''T'' ? items[props.timestampItem].state.slice(0,10) + '' '' + items[props.timestampItem].state.slice(11,16) : ''—'''
           style:
-            font-size: 0.75rem
-            opacity: '0.7'
+            height: 26px
+            display: flex
+            align-items: center
+            justify-content: center
+            font-size: 11px
+            opacity: '0.55'
